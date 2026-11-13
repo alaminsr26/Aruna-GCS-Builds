@@ -5,10 +5,15 @@ name: Build Android APK
 on:
   workflow_dispatch:
     inputs:
+      app:
+        description: v2 or avt
+        type: choice
+        options: [v2, avt]
+        default: v2
       ref:
-        description: Branch of Aruna-Ground-Station-V2
-        default: ai-2.15
-        required: true
+        description: Branch (empty = ai-2.15 for v2, avt-1.0 for avt)
+        default: ''
+        required: false
 
 permissions:
   contents: write
@@ -17,6 +22,11 @@ env:
   QT_VERSION: '6.10.1'
   NDK_VERSION: '27.2.12479018'   # the NDK Qt 6.10 is built with
   ANDROID_PLATFORM: 'android-35'
+  SRC: ${{ inputs.app == 'avt' && 'alaminsr26/Aruna-Ground-Station-4G-AVT' || 'alaminsr26/Aruna-Ground-Station-V2' }}
+  REF: ${{ inputs.ref != '' && inputs.ref || (inputs.app == 'avt' && 'avt-1.0' || 'ai-2.15') }}
+  PREFIX: ${{ inputs.app == 'avt' && 'ArunaGCS-AVT' || 'ArunaGroundStation' }}
+  TAGPRE: ${{ inputs.app == 'avt' && 'avt-v' || 'v' }}
+  TITLE: ${{ inputs.app == 'avt' && 'Aruna GCS AVT' || 'Aruna GCS' }}
 
 jobs:
   android:
@@ -24,8 +34,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: alaminsr26/Aruna-Ground-Station-V2
-          ref: ${{ inputs.ref }}
+          repository: ${{ env.SRC }}
+          ref: ${{ env.REF }}
           token: ${{ secrets.SRC_TOKEN || secrets.SCR_TOKEN }}
           persist-credentials: false
 
@@ -132,7 +142,7 @@ jobs:
           find build -name "*.apk" -exec ls -la {} \;
           apk=$(find build -name "*release-signed.apk" | head -1)
           [ -z "$apk" ] && apk=$(find build -name "*.apk" | head -1)
-          cp "$apk" "ArunaGroundStation-${{ steps.ver.outputs.version }}-b${{ github.run_number }}.apk"
+          cp "$apk" "$PREFIX-${{ steps.ver.outputs.version }}-b${{ github.run_number }}.apk"
           # every library the app needs must be inside the APK (else it closes at start)
           unzip -l "$apk" | grep -E "lib/arm64-v8a/.*\.so" | awk '{print $4}' | sort > apk_libs.txt
           cat apk_libs.txt
@@ -142,10 +152,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="v${{ steps.ver.outputs.version }}-test"
+          tag="$TAGPRE${{ steps.ver.outputs.version }}-test"
           gh release view "$tag" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 || \
-            gh release create "$tag" -R "$GITHUB_REPOSITORY" --prerelease --title "Aruna GCS ${{ steps.ver.outputs.version }} (test)" --notes "Test build from ${{ inputs.ref }}."
-          gh release upload "$tag" ArunaGroundStation-*.apk -R "$GITHUB_REPOSITORY" --clobber
+            gh release create "$tag" -R "$GITHUB_REPOSITORY" --prerelease --title "$TITLE ${{ steps.ver.outputs.version }} (test)" --notes "Test build from $SRC @ $REF."
+          gh release upload "$tag" $PREFIX-*.apk -R "$GITHUB_REPOSITORY" --clobber
           for a in $(gh release view "$tag" -R "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep '\.apk$'); do
             [ -e "$a" ] || gh release delete-asset "$tag" "$a" -R "$GITHUB_REPOSITORY" -y || true
           done
