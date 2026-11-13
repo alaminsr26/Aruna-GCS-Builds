@@ -51,7 +51,7 @@ jobs:
       - name: Build
         run: |
           mkdir -p out
-          cmake -S src -B build -DCMAKE_BUILD_TYPE=Release -DORT_ROOT=$PWD/ort > out/0_cmake.log 2>&1 || true
+          cmake -S src -B build -DCMAKE_BUILD_TYPE=Release -DORT_ROOT=$PWD/ort -DCMAKE_EXE_LINKER_FLAGS="-lX11" > out/0_cmake.log 2>&1 || true
           cmake --build build --target ArunaGroundStation --parallel 4 > out/0_build.log 2>&1 || true
           grep -E "error|Error" out/0_build.log | head -40 > out/0_errors.log || true
           tail -60 out/0_build.log
@@ -75,6 +75,10 @@ jobs:
             timeout 60 xvfb-run -a -s "-screen 0 1600x1000x24" "$app" $args > "out/$1.log" 2>&1
             ls -la "out/$1.png" || tail -20 "out/$1.log"
           }
+          # QML errors at start (what closes the app at once)
+          printf '[General]\nautoConnect=false\n' > "$conf"
+          QT_QPA_PLATFORM=offscreen timeout 25 "$app" --tab 1 --delay 15000 --screenshot out/0_start.png > out/0_qml_start.log 2>&1
+          echo "exit: $?" >> out/0_qml_start.log
           shot 1_camera_smart smart en 1 ""
           shot 2_camera_cm62 camera en 1 ""
           shot 3_camera_lower smart en 1 scroll2
