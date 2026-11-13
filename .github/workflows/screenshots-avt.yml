@@ -51,7 +51,7 @@ jobs:
       - name: Build
         run: |
           mkdir -p out
-          cmake -S src -B build -DCMAKE_BUILD_TYPE=Release -DORT_ROOT=$PWD/ort -DCMAKE_EXE_LINKER_FLAGS="-lX11" > out/0_cmake.log 2>&1 || true
+          cmake -S src -B build -DCMAKE_BUILD_TYPE=Release -DORT_ROOT=$PWD/ort -DAVCODEC_LIBRARY=/usr/lib/x86_64-linux-gnu/libavcodec.so -DAVUTIL_LIBRARY=/usr/lib/x86_64-linux-gnu/libavutil.so > out/0_cmake.log 2>&1 || true
           cmake --build build --target ArunaGroundStation --parallel 4 > out/0_build.log 2>&1 || true
           grep -E "error|Error" out/0_build.log | head -40 > out/0_errors.log || true
           tail -60 out/0_build.log
