@@ -152,7 +152,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="$TAGPRE${{ steps.ver.outputs.version }}-test"
+          tag="${TAGPRE}${{ steps.ver.outputs.version }}-test"   # braces: "$TAGPRE1.0" would read a variable TAGPRE1
           # the Windows build may be creating the same release right now: try again for a minute
           for i in 1 2 3 4 5 6; do
             gh release view "$tag" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 && break
