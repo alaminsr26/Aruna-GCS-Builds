@@ -1,0 +1,62 @@
+# Aruna Ground Station V2, built here from the private source repo (SRC_TOKEN, read only). Push to branch ai-v2.
+name: V2 AI models
+
+# Exports the AI Track GPU models (tools/ai/export_models.py) once and keeps them as assets of a
+# pre-release "ai-models-<hash>". The Windows build downloads them from there into the installer.
+on:
+  workflow_call:
+    outputs:
+      tag:
+        value: ${{ jobs.models.outputs.tag }}
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  models:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: alaminsr26/Aruna-Ground-Station-V2
+          ref: ai-2.15
+          token: ${{ secrets.SRC_TOKEN || secrets.SCR_TOKEN }}
+          persist-credentials: false
+
+      - name: Release tag
+        id: tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          h=$(sha256sum tools/ai/export_models.py | cut -c1-10)
+          echo "tag=ai-models-$h" >> "$GITHUB_OUTPUT"
+          if gh release view "ai-models-$h" -R "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "have=1" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-python@v5
+        if: steps.tag.outputs.have != '1'
+        with:
+          python-version: '3.12'
+
+      - name: Export
+        if: steps.tag.outputs.have != '1'
+        run: |
+          pip install -q --index-url https://download.pytorch.org/whl/cpu torch torchvision
+          pip install -q "rfdetr[onnx]" timm onnx onnxruntime
+          pip install -q "ultralytics>=8.3.78" onnxslim
+          pip install -q gdown onnxconverter-common easydict pyyaml lmdb jpeg4py
+          python tools/ai/export_models.py models
+          ls -la models
+
+      - name: Publish as pre-release
+        if: steps.tag.outputs.have != '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.tag.outputs.tag }}" models/* -R "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "AI models (${{ steps.tag.outputs.tag }})" \
+            --notes "ONNX models for AI Track GPU, made by tools/ai/export_models.py. Used by the Windows installer."

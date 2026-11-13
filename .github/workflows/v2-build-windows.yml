@@ -1,0 +1,322 @@
+# Aruna Ground Station V2, built here from the private source repo (SRC_TOKEN, read only). Push to branch ai-v2.
+name: V2 Windows installer
+
+on:
+  push:
+    branches: [ai-v2]
+  workflow_dispatch:
+
+permissions:
+  contents: write   # needed to attach the installer to a GitHub Release on tags
+
+env:
+  QT_VERSION: '6.10.1'   # 6.10+ = low-latency RTSP playback
+
+jobs:
+  # AI Track GPU models (exported once, kept as a pre-release)
+  models:
+    uses: ./.github/workflows/v2-ai-models.yml
+    secrets: inherit
+
+  windows:
+    needs: [models, pi-package]
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: alaminsr26/Aruna-Ground-Station-V2
+          ref: ai-2.15
+          token: ${{ secrets.SRC_TOKEN || secrets.SCR_TOKEN }}
+          persist-credentials: false
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: windows
+          target: desktop
+          arch: win64_msvc2022_64
+          modules: 'qtmultimedia qtpositioning qtspeech'
+          aqtversion: '>=3.2.0'
+          cache: true
+
+      - name: MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Version
+        id: ver
+        shell: pwsh
+        run: |
+          $v = (Select-String -Path CMakeLists.txt -Pattern 'project\(ArunaGroundStation VERSION ([0-9.]+)').Matches[0].Groups[1].Value
+          "version=$v" >> $env:GITHUB_OUTPUT
+
+      # --- WebRTC video: small FFmpeg (H.264 decoder only, static, MSVC) + OpenSSL for libdatachannel
+      - name: Cache FFmpeg (H.264 decoder)
+        id: ffcache
+        uses: actions/cache@v4
+        with:
+          path: ffmpeg-min
+          key: ffmpeg-n7.1-msvc-h264-v1
+
+      - name: Build FFmpeg (H.264 decoder only)
+        if: steps.ffcache.outputs.cache-hit != 'true'
+        shell: cmd
+        run: |
+          git -c core.autocrlf=false clone --depth 1 --branch n7.1 https://github.com/FFmpeg/FFmpeg ffmpeg-src
+          set MSYS2_PATH_TYPE=inherit
+          set CHERE_INVOKING=1
+          C:\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm --needed make nasm diffutils > /dev/null"
+          C:\msys64\usr\bin\bash.exe -lc "rm -f /usr/bin/link.exe; cd ffmpeg-src && ./configure --toolchain=msvc --prefix=../ffmpeg-min --extra-cflags=-MD --disable-everything --enable-decoder=h264 --enable-parser=h264 --disable-programs --disable-doc --enable-static --disable-shared --disable-network --disable-avformat --disable-swscale --disable-swresample --disable-avdevice --disable-avfilter --disable-iconv --disable-zlib --disable-bzlib --disable-lzma --disable-debug && make -j4 && make install"
+          if not exist ffmpeg-min\lib\libavcodec.a exit /b 1
+
+      - name: OpenSSL
+        shell: pwsh
+        run: |
+          $o = "C:\Program Files\OpenSSL"
+          if (-not (Test-Path "$o\include\openssl\ssl.h")) { choco install openssl -y --no-progress | Out-Null }
+          if (-not (Test-Path "$o\include\openssl\ssl.h")) { throw "OpenSSL not found" }
+          "OPENSSL_ROOT_DIR=$o" >> $env:GITHUB_ENV
+          Get-ChildItem "$o\bin" -Filter "lib*-3-x64.dll" | ForEach-Object Name
+
+      # --- AI Track GPU: ONNX Runtime with DirectML (any DirectX 12 GPU) + the models
+      - name: ONNX Runtime + DirectML
+        shell: pwsh
+        run: |
+          $ver = $null
+          foreach ($v in @("1.23.0", "1.22.1", "1.22.0", "1.21.1", "1.20.1")) {
+            try { Invoke-WebRequest -Uri "https://www.nuget.org/api/v2/package/Microsoft.ML.OnnxRuntime.DirectML/$v" -OutFile ort.zip; $ver = $v; break } catch { }
+          }
+          if (-not $ver) { throw "ONNX Runtime DirectML package not found" }
+          Expand-Archive ort.zip -DestinationPath ort -Force
+          [xml]$x = Get-Content (Get-ChildItem ort -Filter *.nuspec | Select-Object -First 1).FullName
+          $deps = @($x.package.metadata.dependencies.dependency) + @($x.package.metadata.dependencies.group | ForEach-Object { $_.dependency })
+          $dml = ($deps | Where-Object { $_ -and $_.id -eq "Microsoft.AI.DirectML" } | Select-Object -First 1).version -replace '[\[\]\(\) ]', ''
+          if (-not $dml) { $dml = "1.15.4" }
+          $dml = $dml.Split(',')[0]
+          Invoke-WebRequest -Uri "https://www.nuget.org/api/v2/package/Microsoft.AI.DirectML/$dml" -OutFile dml.zip
+          Expand-Archive dml.zip -DestinationPath dml -Force
+          if (-not (Test-Path ort\runtimes\win-x64\native\onnxruntime.dll)) { throw "onnxruntime.dll missing" }
+          if (-not (Test-Path dml\bin\x64-win\DirectML.dll)) { throw "DirectML.dll missing" }
+          Write-Host "::notice title=AI Track GPU::ONNX Runtime $ver with DirectML $dml"
+
+      - name: V2 AI models
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          New-Item -ItemType Directory -Force models | Out-Null
+          gh release download "${{ needs.models.outputs.tag }}" -R "${{ github.repository }}" -D models --clobber
+          Remove-Item models\ostrack256.onnx -ErrorAction SilentlyContinue   # OSTrack removed (2.15): not in the installer
+          Get-ChildItem models | ForEach-Object { "{0,-28} {1,8:N1} MB" -f $_.Name, ($_.Length / 1MB) }
+          foreach ($m in @("rfdetr_nano.onnx", "rfdetr_small.onnx", "rfdetr_medium.onnx", "dinov2_s14.onnx", "mobilesam_encoder.onnx", "mobilesam_decoder.onnx", "vittrack.onnx", "yolo12n.onnx", "yolo12s.onnx", "yolo12m.onnx")) {
+            if (-not (Test-Path "models\$m")) { throw "model $m missing" }
+          }
+
+      # license server public key built into the app (else it is fetched and pinned at the first activation)
+      - name: License server key
+        shell: pwsh
+        run: |
+          $k = ""
+          try { $k = (Invoke-RestMethod -Uri "https://aruna-license.aruna-gcs.workers.dev/api/pubkey" -TimeoutSec 20).key } catch { }
+          if ($k -and ([Convert]::FromBase64String($k)).Length -eq 32) { Write-Host "::notice title=License::server key built in" } else { $k = ""; Write-Host "::warning title=License::server key not reached, the app pins it at the first activation" }
+          "ARUNA_PUBKEY=$k" >> $env:GITHUB_ENV
+
+      - name: Configure
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DFFMPEG_ROOT=%CD%\ffmpeg-min -DORT_ROOT=%CD%\ort -DDML_ROOT=%CD%\dml -DARUNA_LICENSE_PUBKEY=%ARUNA_PUBKEY%
+        shell: cmd
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Tracker test (ByteTrack / BoT-SORT, YOLO12 decode)
+        run: build\Release\aruna_mot_test.exe
+
+      - name: Bundle Qt runtime
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          APP_VERSION: ${{ steps.ver.outputs.version }}
+          REL_SUFFIX: ${{ startsWith(github.ref, 'refs/heads/ai-') && '-test' || '' }}
+          PR_TAG: ${{ github.event_name == 'pull_request' && format('pr-{0}-test', github.event.pull_request.number) || '' }}
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item build\Release\ArunaGroundStation.exe dist\
+          # OpenSSL DLLs for the WebRTC video (libdatachannel)
+          Copy-Item "$env:OPENSSL_ROOT_DIR\bin\libssl-3-x64.dll", "$env:OPENSSL_ROOT_DIR\bin\libcrypto-3-x64.dll" dist\
+          # AI Track GPU: ONNX Runtime + DirectML next to the exe (before the old copies Windows has), models
+          Copy-Item ort\runtimes\win-x64\native\onnxruntime*.dll dist\
+          Copy-Item dml\bin\x64-win\DirectML.dll dist\
+          New-Item -ItemType Directory -Force dist\models | Out-Null
+          Copy-Item models\*.onnx, models\LICENSES.txt, models\manifest.json dist\models\
+          windeployqt --release --qmldir qml --no-translations --compiler-runtime dist\ArunaGroundStation.exe
+          # video player: Qt Multimedia FFmpeg backend + FFmpeg DLLs (windeployqt does not always copy them)
+          New-Item -ItemType Directory -Force dist\multimedia | Out-Null
+          Copy-Item "$env:QT_ROOT_DIR\plugins\multimedia\*.dll" dist\multimedia\ -Force
+          Get-ChildItem "$env:QT_ROOT_DIR\bin" -File | Where-Object { $_.Name -match '^(avcodec|avformat|avutil|swresample|swscale|avfilter|avdevice)-\d+\.dll$' } |
+            ForEach-Object { Copy-Item $_.FullName dist\ -Force }
+          $plug = Get-ChildItem dist\multimedia -Filter "*ffmpeg*.dll" -ErrorAction SilentlyContinue
+          $libs = Get-ChildItem dist -Filter "av*.dll" | ForEach-Object Name
+          if (-not $plug) { throw "Qt Multimedia FFmpeg plugin missing: video would not play" }
+          Write-Host "::notice title=Video player::plugin $($plug.Name -join ', ') | FFmpeg: $($libs -join ', ')"
+          Copy-Item tools\fake_drone.py dist\
+          Copy-Item README.md dist\
+          # Pi package with MediaMTX inside (install on the Pi without internet)
+          $mtx = "v1.21.3"
+          New-Item -ItemType Directory -Force pi\vendor | Out-Null
+          Invoke-WebRequest -Uri "https://github.com/bluenviron/mediamtx/releases/download/$mtx/mediamtx_${mtx}_linux_arm64.tar.gz" -OutFile "pi\vendor\mediamtx_${mtx}_linux_arm64.tar.gz"
+          New-Item -ItemType Directory -Force pi\models | Out-Null
+          if (Test-Path models\yolo12n_320.onnx) { Copy-Item models\yolo12n_320.onnx pi\models\ }   # Pi Lock ByteTrack / BoT-SORT
+          Set-Content -Path pi\VERSION -Value $env:APP_VERSION -NoNewline
+          Copy-Item -Recurse pi dist\pi
+          # the Pi package of the same version for UPDATE PI (Settings > PI MAINTENANCE)
+          New-Item -ItemType Directory -Force dist\pi-update | Out-Null
+          $rel = if ($env:PR_TAG) { $env:PR_TAG } else { "v$($env:APP_VERSION)$($env:REL_SUFFIX)" }
+          gh release download "$rel" -R "${{ github.repository }}" -p "aruna-pi-*.zip" -D dist\pi-update --clobber
+          if (-not (Get-ChildItem dist\pi-update -Filter *.zip)) { Write-Host "::warning title=UPDATE PI::Pi package not found in the release, UPDATE PI will ask for the zip" }
+          $global:LASTEXITCODE = 0     # a pull request has no release: the build goes on without the Pi package
+          Get-ChildItem -Recurse dist\pi -Include __pycache__ | Remove-Item -Recurse -Force
+
+      - name: Smoke test (exe starts and draws a frame)
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          # offscreen platform + software renderer: no GPU/desktop needed on the runner
+          Copy-Item "$env:QT_ROOT_DIR\plugins\platforms\qoffscreen.dll" dist\platforms\
+          $env:QT_QPA_PLATFORM = "offscreen"
+          $env:QT_QUICK_BACKEND = "software"
+          $p = Start-Process -FilePath dist\ArunaGroundStation.exe -ArgumentList "--screenshot","shot.png","--delay","3000" -PassThru -Wait
+          # one picture of each tab, for checking the screens
+          New-Item -ItemType Directory -Force screens | Out-Null
+          foreach ($t in 0..4) { Start-Process -FilePath dist\ArunaGroundStation.exe -ArgumentList "--screenshot","screens\tab$t.png","--delay","3500","--tab","$t" -Wait }
+          Remove-Item dist\platforms\qoffscreen.dll
+          if (-not (Test-Path shot.png)) { throw "app did not start (exit $($p.ExitCode))" }
+
+      - uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: screens
+          retention-days: 2
+          path: screens/*.png
+
+      - name: Build installer (Inno Setup)
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress; }
+          & $iscc /DAppVersion=${{ steps.ver.outputs.version }} installer\aruna.iss
+
+      - name: Portable zip
+        shell: pwsh
+        run: Compress-Archive -Path dist\* -DestinationPath "ArunaGroundStation-${{ steps.ver.outputs.version }}-portable.zip"
+
+      - uses: actions/upload-artifact@v4
+        # the Actions storage quota can be full (installers are ~1 GB): the release below still gets the files
+        continue-on-error: true
+        with:
+          name: ArunaGroundStation-${{ steps.ver.outputs.version }}
+          retention-days: 2
+          path: |
+            installer/Output/*.exe
+            ArunaGroundStation-*-portable.zip
+            shot.png
+
+      # every build of main (and every v* tag) goes to the release of its version, e.g. v2.7.0:
+      # release files do not use the Actions storage quota
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/ai-')
+        uses: softprops/action-gh-release@v2
+        with:
+          # ai-* branches: a test pre-release (v2.8.0-test), main stays as it is
+          tag_name: v${{ steps.ver.outputs.version }}${{ startsWith(github.ref, 'refs/heads/ai-') && '-test' || '' }}
+          prerelease: ${{ startsWith(github.ref, 'refs/heads/ai-') }}
+          target_commitish: ${{ github.sha }}
+          name: Aruna Ground Station ${{ steps.ver.outputs.version }}${{ startsWith(github.ref, 'refs/heads/ai-') && ' (test)' || '' }}
+          body_path: RELEASE_NOTES.md
+          files: |
+            installer/Output/*.exe
+            ArunaGroundStation-*-portable.zip
+      # pull request: installer to a test pre-release "pr-<n>-test" (releases do not use the Actions artifact quota)
+      - name: Attach to pull request test release
+        if: github.event_name == 'pull_request'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: pr-${{ github.event.pull_request.number }}-test
+          prerelease: true
+          target_commitish: ${{ github.event.pull_request.head.sha }}
+          name: "PR #${{ github.event.pull_request.number }} test build (${{ steps.ver.outputs.version }})"
+          body: "Test build of pull request #${{ github.event.pull_request.number }} (${{ github.event.pull_request.head.ref }}). Not a release."
+          files: |
+            installer/Output/*.exe
+            ArunaGroundStation-*-portable.zip
+
+  # Raspberry Pi package (built on Linux so the scripts keep their run permission)
+  pi-package:
+    needs: models
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: alaminsr26/Aruna-Ground-Station-V2
+          ref: ai-2.15
+          token: ${{ secrets.SRC_TOKEN || secrets.SCR_TOKEN }}
+          persist-credentials: false
+      - name: YOLO12 for the Pi Lock (ByteTrack / BoT-SORT)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p pi/models
+          gh release download "${{ needs.models.outputs.tag }}" -R "${{ github.repository }}" -p yolo12n_320.onnx -D pi/models --clobber
+          ls -la pi/models
+      - name: Build aruna-pi zip
+        id: pi
+        run: |
+          v=$(grep -oP 'project\(ArunaGroundStation VERSION \K[0-9.]+' CMakeLists.txt)
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+          mtx=v1.21.3
+          mkdir -p pi/vendor
+          curl -fsSL -o "pi/vendor/mediamtx_${mtx}_linux_arm64.tar.gz" \
+            "https://github.com/bluenviron/mediamtx/releases/download/${mtx}/mediamtx_${mtx}_linux_arm64.tar.gz"
+          # aruna-api in Rust for the Pi (64-bit ARM, glibc 2.28+: Raspberry Pi OS buster and newer)
+          rustup target add aarch64-unknown-linux-gnu
+          python3 -m pip install --quiet --user --break-system-packages ziglang cargo-zigbuild
+          export PATH="$HOME/.local/bin:$PATH"
+          (cd pi/rust/aruna-api && cargo test --release && cargo zigbuild --release --target aarch64-unknown-linux-gnu.2.28)
+          mkdir -p pi/bin
+          cp pi/rust/aruna-api/target/aarch64-unknown-linux-gnu/release/aruna-api pi/bin/aruna-api-aarch64
+          file pi/bin/aruna-api-aarch64
+          rm -rf pi/rust/aruna-api/target
+          chmod +x pi/*.sh pi/*.py pi/tools/*.py
+          for f in pi/*.sh; do bash -n "$f"; done
+          python3 -m py_compile pi/*.py pi/tools/*.py
+          python3 -m pip install --quiet --user --break-system-packages numpy opencv-contrib-python-headless
+          python3 tools/pi_mot_test.py
+          rm -rf pi/__pycache__ pi/tools/__pycache__
+          echo "$v" > pi/VERSION
+          cp -r pi aruna-pi
+          zip -qr "aruna-pi-$v.zip" aruna-pi
+      - uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: aruna-pi-${{ steps.pi.outputs.version }}
+          retention-days: 2
+          path: aruna-pi-*.zip
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/ai-')
+        uses: softprops/action-gh-release@v2
+        with:
+          # ai-* branches: a test pre-release (v2.8.0-test), main stays as it is
+          tag_name: v${{ steps.pi.outputs.version }}${{ startsWith(github.ref, 'refs/heads/ai-') && '-test' || '' }}
+          prerelease: ${{ startsWith(github.ref, 'refs/heads/ai-') }}
+          target_commitish: ${{ github.sha }}
+          name: Aruna Ground Station ${{ steps.pi.outputs.version }}${{ startsWith(github.ref, 'refs/heads/ai-') && ' (test)' || '' }}
+          files: aruna-pi-*.zip
+      - name: Attach to pull request test release
+        if: github.event_name == 'pull_request'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: pr-${{ github.event.pull_request.number }}-test
+          prerelease: true
+          target_commitish: ${{ github.event.pull_request.head.sha }}
+          name: "PR #${{ github.event.pull_request.number }} test build"
+          body: "Test build of pull request #${{ github.event.pull_request.number }} (${{ github.event.pull_request.head.ref }}). Not a release."
+          files: aruna-pi-*.zip

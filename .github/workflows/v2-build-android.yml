@@ -1,0 +1,150 @@
+# Aruna Ground Station V2, built here from the private source repo (SRC_TOKEN, read only). Push to branch ai-v2.
+name: V2 Android APK
+
+# Phone / tablet build of the GCS (Pi Lock only, no AI Track GPU). The APK goes to the same
+# release as the Windows installer (vX-test for ai-* branches).
+on:
+  push:
+    branches: [ai-v2]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  QT_VERSION: '6.10.1'
+  NDK_VERSION: '27.2.12479018'   # the NDK Qt 6.10 is built with
+  ANDROID_PLATFORM: 'android-35'
+
+jobs:
+  android:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: alaminsr26/Aruna-Ground-Station-V2
+          ref: ai-2.15
+          token: ${{ secrets.SRC_TOKEN || secrets.SCR_TOKEN }}
+          persist-credentials: false
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Android SDK / NDK
+        run: |
+          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
+          "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "ndk;${NDK_VERSION}" "platforms;${ANDROID_PLATFORM}" "build-tools;35.0.0" "platform-tools" >/dev/null
+          echo "ANDROID_NDK_ROOT=$ANDROID_SDK_ROOT/ndk/${NDK_VERSION}" >> $GITHUB_ENV
+
+      - name: Install Qt (Linux host, needed to build for Android)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: linux
+          target: desktop
+          arch: linux_gcc_64
+          aqtversion: '>=3.2.0'
+          cache: true
+          set-env: false
+
+      - name: Install Qt for Android
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: all_os          # Qt 6.7+: Android packages are under all_os
+          target: android
+          arch: android_arm64_v8a
+          modules: 'qtmultimedia qtpositioning qtspeech'
+          aqtversion: '>=3.2.0'
+          cache: true
+
+      - name: Version
+        id: ver
+        run: |
+          v=$(grep -oP 'project\(ArunaGroundStation VERSION \K[0-9.]+' CMakeLists.txt)
+          echo "version=$v" >> $GITHUB_OUTPUT
+          ls "$RUNNER_WORKSPACE/Qt/${QT_VERSION}"
+
+      - name: OpenSSL for Android (KDAB)
+        run: |
+          git clone --depth 1 https://github.com/KDAB/android_openssl.git android-openssl
+          ls android-openssl/ssl_3 android-openssl/ssl_3/arm64-v8a
+          ls android-openssl/ssl_3/include | head
+
+      # --- WebRTC video: small FFmpeg (H.264 decoder only, static) built with the NDK
+      - name: Cache FFmpeg (H.264 decoder, Android)
+        id: ffcache
+        uses: actions/cache@v4
+        with:
+          path: ffmpeg-android
+          key: ffmpeg-n7.1-android-arm64-h264-v1
+
+      - name: Build FFmpeg (H.264 decoder only, Android)
+        if: steps.ffcache.outputs.cache-hit != 'true'
+        run: |
+          git clone --depth 1 --branch n7.1 https://github.com/FFmpeg/FFmpeg ffmpeg-src
+          TC=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin
+          cd ffmpeg-src
+          ./configure --prefix=$GITHUB_WORKSPACE/ffmpeg-android --target-os=android --arch=aarch64 --enable-cross-compile \
+            --cc=$TC/aarch64-linux-android28-clang --cxx=$TC/aarch64-linux-android28-clang++ \
+            --ar=$TC/llvm-ar --nm=$TC/llvm-nm --ranlib=$TC/llvm-ranlib --strip=$TC/llvm-strip --enable-pic \
+            --disable-everything --enable-decoder=h264 --enable-parser=h264 --disable-programs --disable-doc \
+            --enable-static --disable-shared --disable-network --disable-avformat --disable-swscale \
+            --disable-swresample --disable-avdevice --disable-avfilter --disable-iconv --disable-zlib \
+            --disable-bzlib --disable-lzma --disable-debug --disable-asm
+          make -j4 && make install
+          ls $GITHUB_WORKSPACE/ffmpeg-android/lib
+
+      - name: Signing key
+        run: |
+          # fixed key kept in the repo so a new APK installs over the old one (personal use)
+          if [ -f android/aruna-release.jks ]; then cp android/aruna-release.jks key.jks; else
+            keytool -genkeypair -keystore key.jks -alias aruna -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass aruna123 -keypass aruna123 -dname "CN=Aruna GCS"; fi
+
+      - name: License server key
+        run: |
+          k=$(curl -s -m 20 https://aruna-license.aruna-gcs.workers.dev/api/pubkey | python3 -c "import sys,json,base64;k=json.load(sys.stdin).get('key','');print(k if len(base64.b64decode(k))==32 else '')" 2>/dev/null || true)
+          echo "ARUNA_PUBKEY=$k" >> $GITHUB_ENV
+
+      - name: Configure
+        run: |
+          QT_ANDROID="$RUNNER_WORKSPACE/Qt/${QT_VERSION}/android_arm64_v8a"
+          QT_HOST="$RUNNER_WORKSPACE/Qt/${QT_VERSION}/gcc_64"
+          "$QT_ANDROID/bin/qt-cmake" -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -DQT_HOST_PATH="$QT_HOST" -DANDROID_SDK_ROOT="$ANDROID_SDK_ROOT" -DANDROID_NDK_ROOT="$ANDROID_NDK_ROOT" \
+            -DANDROID_OPENSSL="$GITHUB_WORKSPACE/android-openssl" -DFFMPEG_ROOT="$GITHUB_WORKSPACE/ffmpeg-android" \
+            -DQT_ANDROID_SIGN_APK=ON -DQT_ANDROID_BUILD_ALL_ABIS=OFF \
+            -DARUNA_LICENSE_PUBKEY="$ARUNA_PUBKEY"
+
+      - name: Build APK
+        env:
+          QT_ANDROID_KEYSTORE_PATH: ${{ github.workspace }}/key.jks
+          QT_ANDROID_KEYSTORE_ALIAS: aruna
+          QT_ANDROID_KEYSTORE_STORE_PASS: aruna123
+          QT_ANDROID_KEYSTORE_KEY_PASS: aruna123
+        run: |
+          cmake --build build --parallel 4 --target apk
+          find build -name "*.apk" -exec ls -la {} \;
+          apk=$(find build -name "*release-signed.apk" | head -1)
+          [ -z "$apk" ] && apk=$(find build -name "*.apk" | head -1)
+          cp "$apk" "ArunaGroundStation-${{ steps.ver.outputs.version }}-b${{ github.run_number }}.apk"
+          # every library the app needs must be inside the APK (else it closes at start)
+          unzip -l "$apk" | grep -E "lib/arm64-v8a/.*\.so" | awk '{print $4}' | sort > apk_libs.txt
+          cat apk_libs.txt
+          for l in libssl_3.so libcrypto_3.so; do grep -q "$l" apk_libs.txt || { echo "::error::$l missing in the APK"; exit 1; }; done
+
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/heads/ai-') || startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # upload only (the release itself is made by the Windows build)
+          tag="${{ startsWith(github.ref, 'refs/heads/ai-') && format('v{0}-test', steps.ver.outputs.version) || github.ref_name }}"
+          gh release upload "$tag" ArunaGroundStation-*.apk -R "$GITHUB_REPOSITORY" --clobber
+          # then drop the APKs of older builds
+          for a in $(gh release view "$tag" -R "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep '\.apk$'); do
+            [ -e "$a" ] || gh release delete-asset "$tag" "$a" -R "$GITHUB_REPOSITORY" -y || true
+          done
