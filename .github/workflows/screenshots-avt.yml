@@ -65,7 +65,7 @@ jobs:
           conf="$HOME/.config/Aruna/Aruna GCS AVT.conf"
           mkdir -p "$(dirname "$conf")"
           shot() {   # name engine lang tab open
-            printf '[General]\ntrackEngine=%s\nlang=%s\nautoConnect=false\n' "$2" "$3" > "$conf"
+            printf '[General]\ntrackEngine=%s\nlanguage=%s\nautoConnect=false\n' "$2" "$3" > "$conf"
             args="--tab $4 --delay 7000 --screenshot out/$1.png"
             [ -n "$5" ] && args="$args --open $5"
             timeout 60 xvfb-run -a -s "-screen 0 1600x1000x24" "$app" $args > "out/$1.log" 2>&1
