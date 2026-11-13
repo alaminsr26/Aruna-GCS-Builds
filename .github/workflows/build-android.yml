@@ -26,7 +26,7 @@ jobs:
         with:
           repository: alaminsr26/Aruna-Ground-Station-V2
           ref: ${{ inputs.ref }}
-          token: ${{ secrets.SRC_TOKEN }}
+          token: ${{ secrets.SRC_TOKEN || secrets.SCR_TOKEN }}
           persist-credentials: false
 
       - uses: actions/setup-java@v4
