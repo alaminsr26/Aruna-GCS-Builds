@@ -79,6 +79,8 @@ jobs:
           printf '[General]\nautoConnect=false\n' > "$conf"
           QT_QPA_PLATFORM=offscreen timeout 25 "$app" --tab 1 --delay 15000 --screenshot out/0_start.png > out/0_qml_start.log 2>&1
           echo "exit: $?" >> out/0_qml_start.log
+          shot 7_dashboard smart en 0 ""
+          shot 8_network smart en 2 ""
           shot 1_camera_smart smart en 1 ""
           shot 2_camera_cm62 camera en 1 ""
           shot 3_camera_lower smart en 1 scroll2
