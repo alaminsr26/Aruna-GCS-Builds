@@ -16,6 +16,7 @@ jobs:
   # AI Track GPU models (exported once, kept as a pre-release)
   models:
     uses: ./.github/workflows/avt-ai-models.yml
+    secrets: inherit                      # SRC_TOKEN for the source checkout
 
   windows:
     needs: [models, pi-package]
