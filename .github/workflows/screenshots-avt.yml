@@ -1,0 +1,92 @@
+name: Screenshots Aruna GCS AVT
+
+# Builds the Linux desktop app from the private source repo (SRC_TOKEN, read only) and takes screenshots
+# with the app's own --screenshot option. No APK / installer is made. The PNGs go to branch shots-avt-out.
+on:
+  push:
+    branches: [shots-avt]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  shots:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: builds
+      - uses: actions/checkout@v4
+        with:
+          repository: alaminsr26/Aruna-Ground-Station-4G-AVT
+          ref: avt-1.0
+          token: ${{ secrets.SRC_TOKEN || secrets.SCR_TOKEN }}
+          persist-credentials: false
+          path: src
+
+      - name: Packages
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libavcodec-dev libavutil-dev libssl-dev zlib1g-dev xvfb \
+            libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 \
+            libxcb-render-util0 libxcb-shape0 libxcb-xinerama0 libxcb-xkb1 libgl1-mesa-dev libegl1 \
+            libpulse0 fonts-dejavu-core fonts-noto-core >/dev/null
+
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.10.1'
+          host: linux
+          target: desktop
+          arch: linux_gcc_64
+          modules: 'qtmultimedia qtpositioning qtspeech'
+          aqtversion: '>=3.2.0'
+          cache: true
+
+      - name: ONNX Runtime (Linux, only so the Smart Track controls show)
+        run: |
+          curl -sSL -o ort.tgz https://github.com/microsoft/onnxruntime/releases/download/v1.22.0/onnxruntime-linux-x64-1.22.0.tgz
+          mkdir ort && tar xzf ort.tgz -C ort --strip-components=1 && ls ort/lib | head
+
+      - name: Build
+        run: |
+          cmake -S src -B build -DCMAKE_BUILD_TYPE=Release -DORT_ROOT=$PWD/ort
+          cmake --build build --target ArunaGroundStation --parallel 4 2>&1 | tail -40
+
+      - name: Screenshots
+        env:
+          QT_QUICK_BACKEND: software
+          LD_LIBRARY_PATH: ${{ github.workspace }}/ort/lib
+        run: |
+          set +e
+          mkdir -p out models && touch models/vittrack.onnx models/dinov2_s14.onnx
+          export ARUNA_AI_MODELS=$PWD/models
+          app=$(find build -maxdepth 2 -type f -name ArunaGroundStation | head -1)
+          conf="$HOME/.config/Aruna/Aruna GCS AVT.conf"
+          mkdir -p "$(dirname "$conf")"
+          shot() {   # name engine lang tab open
+            printf '[General]\ntrackEngine=%s\nlang=%s\nautoConnect=false\n' "$2" "$3" > "$conf"
+            args="--tab $4 --delay 7000 --screenshot out/$1.png"
+            [ -n "$5" ] && args="$args --open $5"
+            timeout 60 xvfb-run -a -s "-screen 0 1600x1000x24" "$app" $args > "out/$1.log" 2>&1
+            ls -la "out/$1.png" || tail -20 "out/$1.log"
+          }
+          shot 1_camera_smart smart en 1 ""
+          shot 2_camera_cm62 camera en 1 ""
+          shot 3_camera_lower smart en 1 scroll2
+          shot 4_settings_smart smart en 4 setsmart
+          shot 5_direction_check smart en 4 gwiz
+          shot 6_camera_smart_id smart id 1 ""
+          true
+
+      - name: Publish to branch shots-avt-out
+        working-directory: builds
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git checkout --orphan shots-avt-out
+          git rm -rfq . || true
+          cp ../out/*.png ../out/*.log . 2>/dev/null || true
+          git add -A
+          git commit -qm "screenshots ${GITHUB_SHA::7}"
+          git push -f origin shots-avt-out
