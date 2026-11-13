@@ -153,8 +153,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           tag="$TAGPRE${{ steps.ver.outputs.version }}-test"
-          gh release view "$tag" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 || \
-            gh release create "$tag" -R "$GITHUB_REPOSITORY" --prerelease --title "$TITLE ${{ steps.ver.outputs.version }} (test)" --notes "Test build from $SRC @ $REF."
+          # the Windows build may be creating the same release right now: try again for a minute
+          for i in 1 2 3 4 5 6; do
+            gh release view "$tag" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 && break
+            gh release create "$tag" -R "$GITHUB_REPOSITORY" --prerelease --title "$TITLE ${{ steps.ver.outputs.version }} (test)" --notes "Test build from $SRC @ $REF." && break
+            sleep 10
+          done
           gh release upload "$tag" $PREFIX-*.apk -R "$GITHUB_REPOSITORY" --clobber
           for a in $(gh release view "$tag" -R "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep '\.apk$'); do
             [ -e "$a" ] || gh release delete-asset "$tag" "$a" -R "$GITHUB_REPOSITORY" -y || true
