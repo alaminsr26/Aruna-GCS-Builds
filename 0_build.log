@@ -1,0 +1,343 @@
+[  0%] Built target usrsctp_autogen_timestamp_deps
+[  0%] Built target juice-static_autogen_timestamp_deps
+[  0%] Built target srtp2_autogen_timestamp_deps
+[  1%] Copying ArunaGroundStation qml sources into build dir
+[  3%] Copying ArunaGroundStation qml resources into build dir
+[  3%] Populating .qmlls.ini file at /home/runner/work/Aruna-GCS-Builds/Aruna-GCS-Builds/build/.qt/.qmlls.build.ini
+[  3%] Running qmlimportscanner for ArunaGroundStation
+[  3%] Built target ArunaGroundStation_copy_res
+[  3%] Built target ArunaGroundStation_copy_qml
+[  4%] Automatic MOC and UIC for target juice-static
+[  6%] Automatic MOC and UIC for target usrsctp
+[  6%] Built target generate_qmlls_build_ini_file
+[  6%] Automatic MOC and UIC for target srtp2
+[  6%] Built target juice-static_autogen
+[  6%] Built target srtp2_autogen
+[  6%] Building CXX object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/juice-static_autogen/mocs_compilation.cpp.o
+[  6%] Building CXX object _deps/libdatachannel-build/deps/libsrtp/CMakeFiles/srtp2.dir/srtp2_autogen/mocs_compilation.cpp.o
+[  6%] Built target ArunaGroundStation_qmlimportscan
+[  6%] Building C object _deps/libdatachannel-build/deps/libsrtp/CMakeFiles/srtp2.dir/srtp/srtp.c.o
+[  6%] Built target usrsctp_autogen
+[  6%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/addr.c.o
+[  8%] Building C object _deps/libdatachannel-build/deps/libsrtp/CMakeFiles/srtp2.dir/crypto/cipher/cipher.c.o
+[  9%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/agent.c.o
+[  9%] Building CXX object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/usrsctp_autogen/mocs_compilation.cpp.o
+[  9%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet/sctp_asconf.c.o
+[  9%] Building C object _deps/libdatachannel-build/deps/libsrtp/CMakeFiles/srtp2.dir/crypto/cipher/cipher_test_cases.c.o
+[  9%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/crc32.c.o
+[  9%] Building C object _deps/libdatachannel-build/deps/libsrtp/CMakeFiles/srtp2.dir/crypto/cipher/null_cipher.c.o
+[  9%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet/sctp_auth.c.o
+[  9%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet/sctp_bsd_addr.c.o
+[ 11%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet/sctp_callout.c.o
+[ 11%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/const_time.c.o
+[ 11%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/conn.c.o
+[ 11%] Building C object _deps/libdatachannel-build/deps/libsrtp/CMakeFiles/srtp2.dir/crypto/cipher/aes_icm_ossl.c.o
+[ 11%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet/sctp_cc_functions.c.o
+[ 11%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/conn_poll.c.o
+[ 13%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/conn_thread.c.o
+[ 13%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet/sctp_crc32.c.o
+[ 13%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/conn_mux.c.o
+[ 13%] Building C object _deps/libdatachannel-build/deps/libsrtp/CMakeFiles/srtp2.dir/crypto/cipher/aes_gcm_ossl.c.o
+[ 13%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/base64.c.o
+[ 14%] Building C object _deps/libdatachannel-build/deps/libsrtp/CMakeFiles/srtp2.dir/crypto/hash/auth.c.o
+[ 14%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet/sctp_indata.c.o
+[ 14%] Building C object _deps/libdatachannel-build/deps/libsrtp/CMakeFiles/srtp2.dir/crypto/hash/auth_test_cases.c.o
+[ 14%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/hash.c.o
+[ 14%] Building C object _deps/libdatachannel-build/deps/libsrtp/CMakeFiles/srtp2.dir/crypto/hash/null_auth.c.o
+[ 14%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet/sctp_input.c.o
+[ 14%] Building C object _deps/libdatachannel-build/deps/libsrtp/CMakeFiles/srtp2.dir/crypto/hash/hmac_ossl.c.o
+[ 14%] Building C object _deps/libdatachannel-build/deps/libsrtp/CMakeFiles/srtp2.dir/crypto/kernel/alloc.c.o
+[ 14%] Building C object _deps/libdatachannel-build/deps/libsrtp/CMakeFiles/srtp2.dir/crypto/kernel/crypto_kernel.c.o
+[ 16%] Building C object _deps/libdatachannel-build/deps/libsrtp/CMakeFiles/srtp2.dir/crypto/kernel/err.c.o
+[ 16%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/hmac.c.o
+[ 16%] Building C object _deps/libdatachannel-build/deps/libsrtp/CMakeFiles/srtp2.dir/crypto/kernel/key.c.o
+[ 16%] Building C object _deps/libdatachannel-build/deps/libsrtp/CMakeFiles/srtp2.dir/crypto/math/datatypes.c.o
+[ 18%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/ice.c.o
+[ 18%] Building C object _deps/libdatachannel-build/deps/libsrtp/CMakeFiles/srtp2.dir/crypto/replay/rdb.c.o
+[ 18%] Building C object _deps/libdatachannel-build/deps/libsrtp/CMakeFiles/srtp2.dir/crypto/replay/rdbx.c.o
+[ 19%] Linking CXX static library libsrtp2.a
+[ 19%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/juice.c.o
+[ 19%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/log.c.o
+[ 19%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/random.c.o
+[ 19%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/server.c.o
+[ 21%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet/sctp_output.c.o
+[ 21%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/stun.c.o
+[ 21%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet/sctp_pcb.c.o
+[ 22%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/timestamp.c.o
+[ 22%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/tcp.c.o
+[ 22%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/turn.c.o
+[ 22%] Built target srtp2
+[ 22%] Building C object _deps/libdatachannel-build/deps/libjuice/CMakeFiles/juice-static.dir/src/udp.c.o
+[ 22%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet/sctp_peeloff.c.o
+[ 22%] Linking CXX static library libjuice-static.a
+[ 22%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet/sctp_sha1.c.o
+[ 22%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet/sctp_ss_functions.c.o
+[ 22%] Built target juice-static
+[ 22%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet/sctp_sysctl.c.o
+[ 24%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet/sctp_timer.c.o
+[ 24%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet/sctp_userspace.c.o
+[ 24%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet/sctp_usrreq.c.o
+[ 24%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet/sctputil.c.o
+[ 24%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/netinet6/sctp6_usrreq.c.o
+[ 26%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/user_environment.c.o
+[ 26%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/user_mbuf.c.o
+[ 26%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/user_recv_thread.c.o
+[ 26%] Building C object _deps/libdatachannel-build/deps/usrsctp/usrsctplib/CMakeFiles/usrsctp.dir/user_socket.c.o
+[ 26%] Linking CXX static library libusrsctp.a
+[ 26%] Built target usrsctp
+[ 26%] Built target datachannel-static_autogen_timestamp_deps
+[ 26%] Automatic MOC and UIC for target datachannel-static
+[ 26%] Built target datachannel-static_autogen
+[ 27%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/datachannel-static_autogen/mocs_compilation.cpp.o
+[ 27%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/candidate.cpp.o
+[ 27%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/channel.cpp.o
+[ 27%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/configuration.cpp.o
+[ 27%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/datachannel.cpp.o
+[ 27%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/dependencydescriptor.cpp.o
+[ 29%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/description.cpp.o
+[ 29%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/iceudpmuxlistener.cpp.o
+[ 29%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/mediahandler.cpp.o
+[ 29%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/global.cpp.o
+[ 29%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/message.cpp.o
+[ 31%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/peerconnection.cpp.o
+[ 31%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/rtcpreceivingsession.cpp.o
+[ 31%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/track.cpp.o
+[ 31%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/websocket.cpp.o
+[ 31%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/websocketserver.cpp.o
+[ 31%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/rtppacketizationconfig.cpp.o
+[ 32%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/rtcpsrreporter.cpp.o
+[ 32%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/rtppacketizer.cpp.o
+[ 32%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/rtpdepacketizer.cpp.o
+[ 32%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/h264rtppacketizer.cpp.o
+[ 32%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/h264rtpdepacketizer.cpp.o
+[ 34%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/nalunit.cpp.o
+[ 34%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/h265rtppacketizer.cpp.o
+[ 34%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/h265rtpdepacketizer.cpp.o
+[ 34%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/h265nalunit.cpp.o
+[ 34%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/av1rtppacketizer.cpp.o
+[ 34%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/rtcpnackresponder.cpp.o
+[ 36%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/rtp.cpp.o
+[ 36%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/capi.cpp.o
+[ 36%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/plihandler.cpp.o
+[ 36%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/pacinghandler.cpp.o
+[ 36%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/rembhandler.cpp.o
+[ 37%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/certificate.cpp.o
+[ 37%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/channel.cpp.o
+[ 37%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/datachannel.cpp.o
+[ 37%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/dtlssrtptransport.cpp.o
+[ 37%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/dtlstransport.cpp.o
+[ 37%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/icetransport.cpp.o
+[ 39%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/iceudpmuxlistener.cpp.o
+[ 39%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/init.cpp.o
+[ 39%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/peerconnection.cpp.o
+[ 39%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/logcounter.cpp.o
+[ 39%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/sctptransport.cpp.o
+[ 40%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/threadpool.cpp.o
+[ 40%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/tls.cpp.o
+[ 40%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/track.cpp.o
+[ 40%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/utils.cpp.o
+[ 40%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/processor.cpp.o
+[ 42%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/sha.cpp.o
+[ 42%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/pollinterrupter.cpp.o
+[ 42%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/pollservice.cpp.o
+[ 42%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/http.cpp.o
+[ 42%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/httpproxytransport.cpp.o
+[ 42%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/tcpserver.cpp.o
+[ 44%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/tcptransport.cpp.o
+[ 44%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/tlstransport.cpp.o
+[ 44%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/transport.cpp.o
+[ 44%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/verifiedtlstransport.cpp.o
+[ 44%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/websocket.cpp.o
+[ 45%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/websocketserver.cpp.o
+[ 45%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/wstransport.cpp.o
+[ 45%] Building CXX object _deps/libdatachannel-build/CMakeFiles/datachannel-static.dir/src/impl/wshandshake.cpp.o
+[ 45%] Linking CXX static library libdatachannel-static.a
+[ 45%] Built target datachannel-static
+[ 45%] Built target ArunaGroundStation_autogen_timestamp_deps
+[ 45%] Automatic MOC and UIC for target ArunaGroundStation
+[ 45%] Built target ArunaGroundStation_autogen
+[ 45%] Running AUTOMOC file extraction for target ArunaGroundStation
+[ 45%] Running rcc for resource ArunaGroundStation_raw_res_0
+[ 47%] Running rcc for resource qmake_Aruna
+[ 47%] Running rcc for resource ArunaGroundStation_raw_qml_0
+[ 47%] Generating .rcc/qmlcache/ArunaGroundStation_qmlcache_loader.cpp
+[ 47%] Running moc --collect-json for target ArunaGroundStation
+[ 47%] Generating meta_types/qt6arunagroundstation_metatypes.json
+[ 47%] Automatic QML type registration for target ArunaGroundStation
+[ 47%] Generating .rcc/qmlcache/ArunaGroundStation_qml/AdvancedTracking_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/AdvancedTracking_qml.cpp.aotstats
+[ 47%] Generating .rcc/qmlcache/ArunaGroundStation_qml/AiGeoCard_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/AiGeoCard_qml.cpp.aotstats
+[ 47%] Generating .rcc/qmlcache/ArunaGroundStation_qml/BigTile_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/BigTile_qml.cpp.aotstats
+[ 47%] Generating .rcc/qmlcache/ArunaGroundStation_qml/Btn_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/Btn_qml.cpp.aotstats
+[ 47%] Generating .rcc/qmlcache/ArunaGroundStation_qml/CamCtl_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/CamCtl_qml.cpp.aotstats
+[ 47%] Generating .rcc/qmlcache/ArunaGroundStation_qml/CamGimbalPanel_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/CamGimbalPanel_qml.cpp.aotstats
+[ 47%] Generating .rcc/qmlcache/ArunaGroundStation_qml/CamMultiPanel_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/CamMultiPanel_qml.cpp.aotstats
+[ 47%] Generating .rcc/qmlcache/ArunaGroundStation_qml/CamMulti_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/CamMulti_qml.cpp.aotstats
+[ 47%] Generating .rcc/qmlcache/ArunaGroundStation_qml/CamPopout_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/CamPopout_qml.cpp.aotstats
+[ 47%] Generating .rcc/qmlcache/ArunaGroundStation_qml/CamRecordCard_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/CamRecordCard_qml.cpp.aotstats
+[ 49%] Generating .rcc/qmlcache/ArunaGroundStation_qml/CamSetupPanel_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/CamSetupPanel_qml.cpp.aotstats
+[ 49%] Generating .rcc/qmlcache/ArunaGroundStation_qml/CamVideo_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/CamVideo_qml.cpp.aotstats
+[ 50%] Generating .rcc/qmlcache/ArunaGroundStation_qml/CameraPage_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/CameraPage_qml.cpp.aotstats
+[ 50%] Generating .rcc/qmlcache/ArunaGroundStation_qml/Card_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/Card_qml.cpp.aotstats
+[ 50%] Generating .rcc/qmlcache/ArunaGroundStation_qml/ConfirmDialog_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/ConfirmDialog_qml.cpp.aotstats
+[ 50%] Generating .rcc/qmlcache/ArunaGroundStation_qml/CustomizeDialog_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/CustomizeDialog_qml.cpp.aotstats
+[ 50%] Generating .rcc/qmlcache/ArunaGroundStation_qml/DashboardPage_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/DashboardPage_qml.cpp.aotstats
+[ 50%] Generating .rcc/qmlcache/ArunaGroundStation_qml/DialogFooter_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/DialogFooter_qml.cpp.aotstats
+[ 50%] Generating .rcc/qmlcache/ArunaGroundStation_qml/DialogHeader_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/DialogHeader_qml.cpp.aotstats
+[ 50%] Generating .rcc/qmlcache/ArunaGroundStation_qml/DisplayVoiceCard_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/DisplayVoiceCard_qml.cpp.aotstats
+[ 50%] Generating .rcc/qmlcache/ArunaGroundStation_qml/Fields_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/Fields_qml.cpp.aotstats
+[ 52%] Generating .rcc/qmlcache/ArunaGroundStation_qml/FindingsCard_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/FindingsCard_qml.cpp.aotstats
+[ 54%] Generating .rcc/qmlcache/ArunaGroundStation_qml/FlightGraphs_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/FlightGraphs_qml.cpp.aotstats
+[ 54%] Generating .rcc/qmlcache/ArunaGroundStation_qml/FlyToDialog_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/FlyToDialog_qml.cpp.aotstats
+[ 54%] Generating .rcc/qmlcache/ArunaGroundStation_qml/GimbalHud_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/GimbalHud_qml.cpp.aotstats
+[ 54%] Generating .rcc/qmlcache/ArunaGroundStation_qml/GimbalWizard_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/GimbalWizard_qml.cpp.aotstats
+[ 54%] Generating .rcc/qmlcache/ArunaGroundStation_qml/HoldBtn_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/HoldBtn_qml.cpp.aotstats
+[ 54%] Generating .rcc/qmlcache/ArunaGroundStation_qml/JoyCtl_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/JoyCtl_qml.cpp.aotstats
+[ 54%] Generating .rcc/qmlcache/ArunaGroundStation_qml/JoystickPanel_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/JoystickPanel_qml.cpp.aotstats
+[ 54%] Generating .rcc/qmlcache/ArunaGroundStation_qml/KV_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/KV_qml.cpp.aotstats
+[ 54%] Generating .rcc/qmlcache/ArunaGroundStation_qml/LicenseCard_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/LicenseCard_qml.cpp.aotstats
+[ 55%] Generating .rcc/qmlcache/ArunaGroundStation_qml/LicenseGate_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/LicenseGate_qml.cpp.aotstats
+[ 55%] Generating .rcc/qmlcache/ArunaGroundStation_qml/LinkBanner_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/LinkBanner_qml.cpp.aotstats
+[ 57%] Generating .rcc/qmlcache/ArunaGroundStation_qml/LogsPage_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/LogsPage_qml.cpp.aotstats
+[ 57%] Generating .rcc/qmlcache/ArunaGroundStation_qml/Main_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/Main_qml.cpp.aotstats
+[ 57%] Generating .rcc/qmlcache/ArunaGroundStation_qml/MarkDialog_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/MarkDialog_qml.cpp.aotstats
+[ 57%] Generating .rcc/qmlcache/ArunaGroundStation_qml/MobileShell_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/MobileShell_qml.cpp.aotstats
+[ 57%] Generating .rcc/qmlcache/ArunaGroundStation_qml/NetAlertsCard_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/NetAlertsCard_qml.cpp.aotstats
+[ 59%] Generating .rcc/qmlcache/ArunaGroundStation_qml/NetFmt_js.cpp
+[ 59%] Generating .rcc/qmlcache/ArunaGroundStation_qml/NetLaptopCard_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/NetLaptopCard_qml.cpp.aotstats
+[ 59%] Generating .rcc/qmlcache/ArunaGroundStation_qml/NetModemCard_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/NetModemCard_qml.cpp.aotstats
+[ 59%] Generating .rcc/qmlcache/ArunaGroundStation_qml/NetworkPage_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/NetworkPage_qml.cpp.aotstats
+[ 60%] Generating .rcc/qmlcache/ArunaGroundStation_qml/PhotoGallery_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/PhotoGallery_qml.cpp.aotstats
+[ 60%] Generating .rcc/qmlcache/ArunaGroundStation_qml/PiMaintCard_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/PiMaintCard_qml.cpp.aotstats
+[ 62%] Generating .rcc/qmlcache/ArunaGroundStation_qml/Pill_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/Pill_qml.cpp.aotstats
+[ 62%] Generating .rcc/qmlcache/ArunaGroundStation_qml/PreflightDialog_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/PreflightDialog_qml.cpp.aotstats
+[ 62%] Generating .rcc/qmlcache/ArunaGroundStation_qml/ReplayView_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/ReplayView_qml.cpp.aotstats
+[ 62%] Generating .rcc/qmlcache/ArunaGroundStation_qml/SecLabel_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/SecLabel_qml.cpp.aotstats
+[ 63%] Generating .rcc/qmlcache/ArunaGroundStation_qml/SegTabs_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/SegTabs_qml.cpp.aotstats
+[ 63%] Generating .rcc/qmlcache/ArunaGroundStation_qml/SettingsPage_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/SettingsPage_qml.cpp.aotstats
+[ 63%] Generating .rcc/qmlcache/ArunaGroundStation_qml/SliderRow_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/SliderRow_qml.cpp.aotstats
+[ 63%] Generating .rcc/qmlcache/ArunaGroundStation_qml/Stat_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/Stat_qml.cpp.aotstats
+[ 63%] Generating .rcc/qmlcache/ArunaGroundStation_qml/SubText_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/SubText_qml.cpp.aotstats
+[ 65%] Generating .rcc/qmlcache/ArunaGroundStation_qml/Theme_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/Theme_qml.cpp.aotstats
+[ 65%] Generating .rcc/qmlcache/ArunaGroundStation_qml/ThemedMenuItem_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/ThemedMenuItem_qml.cpp.aotstats
+[ 65%] Generating .rcc/qmlcache/ArunaGroundStation_qml/ThemedMenu_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/ThemedMenu_qml.cpp.aotstats
+[ 65%] Generating .rcc/qmlcache/ArunaGroundStation_qml/Tile_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/Tile_qml.cpp.aotstats
+[ 65%] Generating .rcc/qmlcache/ArunaGroundStation_qml/Toast_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/Toast_qml.cpp.aotstats
+[ 65%] Generating .rcc/qmlcache/ArunaGroundStation_qml/ToggleRow_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/ToggleRow_qml.cpp.aotstats
+[ 65%] Generating .rcc/qmlcache/ArunaGroundStation_qml/TrafficCard_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/TrafficCard_qml.cpp.aotstats
+[ 65%] Generating .rcc/qmlcache/ArunaGroundStation_qml/VpnCard_qml.cpp, .rcc/qmlcache/ArunaGroundStation_qml/VpnCard_qml.cpp.aotstats
+[ 65%] Building CXX object CMakeFiles/ArunaGroundStation.dir/ArunaGroundStation_autogen/mocs_compilation.cpp.o
+[ 67%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/main.cpp.o
+[ 67%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/ai/AiTrack.cpp.o
+[ 67%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/TargetGeo.cpp.o
+[ 67%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/GimbalRoi.cpp.o
+[ 67%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/License.cpp.o
+[ 67%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/Reporter.cpp.o
+[ 68%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/Vpn.cpp.o
+[ 68%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/Voice.cpp.o
+[ 68%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/PhotoLog.cpp.o
+[ 68%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/Replay.cpp.o
+[ 68%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/FlightReport.cpp.o
+[ 70%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/AdsbTraffic.cpp.o
+[ 70%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/Findings.cpp.o
+[ 70%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/AiGeo.cpp.o
+[ 70%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/PiTools.cpp.o
+[ 70%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/Device.cpp.o
+[ 70%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/Joystick.cpp.o
+[ 72%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/map/TrafficIcon.cpp.o
+[ 72%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/AppSettings.cpp.o
+[ 72%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/Translator.cpp.o
+[ 72%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/MavlinkLink.cpp.o
+[ 72%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/Vehicle.cpp.o
+[ 73%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/Mission.cpp.o
+[ 73%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/FcLogs.cpp.o
+[ 73%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/CameraTrigger.cpp.o
+[ 73%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/PiStatus.cpp.o
+[ 73%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/NetMonitor.cpp.o
+[ 73%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/camera/GcsMedia.cpp.o
+[ 75%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/GcsLocation.cpp.o
+[ 75%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/PiProbe.cpp.o
+[ 75%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/FlightLogger.cpp.o
+[ 75%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/SessionModel.cpp.o
+[ 75%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/Alarm.cpp.o
+[ 77%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/GeoUtil.cpp.o
+[ 77%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/map/TileCache.cpp.o
+[ 77%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/map/TerrainCache.cpp.o
+[ 77%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/core/FlightGraph.cpp.o
+[ 77%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/map/MapView.cpp.o
+[ 78%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/ui/AttitudeIndicator.cpp.o
+[ 78%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/ui/GraphChart.cpp.o
+[ 78%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/camera/CameraApi.cpp.o
+[ 78%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/camera/VideoPlayer.cpp.o
+[ 78%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/camera/CameraManager.cpp.o
+[ 78%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/camera/H264Decoder.cpp.o
+[ 80%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/ai/AiModels.cpp.o
+[ 80%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/ai/AiWorker.cpp.o
+[ 80%] Building CXX object CMakeFiles/ArunaGroundStation.dir/src/ai/MotTracker.cpp.o
+[ 80%] Building CXX object CMakeFiles/ArunaGroundStation.dir/arunagroundstation_qmltyperegistrations.cpp.o
+[ 80%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.qt/rcc/qrc_qmake_Aruna.cpp.o
+[ 81%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qmlcache_loader.cpp.o
+[ 81%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/Main_qml.cpp.o
+[ 81%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/Theme_qml.cpp.o
+[ 81%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/Fields_qml.cpp.o
+[ 81%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/Tile_qml.cpp.o
+[ 81%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/CustomizeDialog_qml.cpp.o
+[ 83%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/Card_qml.cpp.o
+[ 83%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/Pill_qml.cpp.o
+[ 83%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/KV_qml.cpp.o
+[ 83%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/BigTile_qml.cpp.o
+[ 83%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/NetLaptopCard_qml.cpp.o
+[ 85%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/NetModemCard_qml.cpp.o
+[ 85%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/NetAlertsCard_qml.cpp.o
+[ 85%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/NetFmt_js.cpp.o
+[ 85%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/Stat_qml.cpp.o
+[ 85%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/Btn_qml.cpp.o
+[ 85%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/DashboardPage_qml.cpp.o
+[ 86%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/NetworkPage_qml.cpp.o
+[ 86%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/CameraPage_qml.cpp.o
+[ 86%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/CamCtl_qml.cpp.o
+[ 86%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/JoyCtl_qml.cpp.o
+[ 86%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/JoystickPanel_qml.cpp.o
+[ 88%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/CamVideo_qml.cpp.o
+[ 88%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/CamRecordCard_qml.cpp.o
+[ 88%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/FlightGraphs_qml.cpp.o
+[ 88%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/CamMulti_qml.cpp.o
+[ 88%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/CamMultiPanel_qml.cpp.o
+[ 88%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/CamPopout_qml.cpp.o
+[ 90%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/CamGimbalPanel_qml.cpp.o
+[ 90%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/CamSetupPanel_qml.cpp.o
+[ 90%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/ToggleRow_qml.cpp.o
+[ 90%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/SliderRow_qml.cpp.o
+[ 90%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/SecLabel_qml.cpp.o
+[ 91%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/SubText_qml.cpp.o
+[ 91%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/HoldBtn_qml.cpp.o
+[ 91%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/LogsPage_qml.cpp.o
+[ 91%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/SettingsPage_qml.cpp.o
+[ 91%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/LinkBanner_qml.cpp.o
+[ 91%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/ConfirmDialog_qml.cpp.o
+[ 93%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/Toast_qml.cpp.o
+[ 93%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/LicenseGate_qml.cpp.o
+[ 93%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/LicenseCard_qml.cpp.o
+[ 93%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/PreflightDialog_qml.cpp.o
+[ 93%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/VpnCard_qml.cpp.o
+[ 95%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/DisplayVoiceCard_qml.cpp.o
+[ 95%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/ReplayView_qml.cpp.o
+[ 95%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/PhotoGallery_qml.cpp.o
+[ 95%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/AdvancedTracking_qml.cpp.o
+[ 95%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/FlyToDialog_qml.cpp.o
+[ 96%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/DialogHeader_qml.cpp.o
+[ 96%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/DialogFooter_qml.cpp.o
+[ 96%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/SegTabs_qml.cpp.o
+[ 96%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/ThemedMenu_qml.cpp.o
+[ 96%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/ThemedMenuItem_qml.cpp.o
+[ 96%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/TrafficCard_qml.cpp.o
+[ 98%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/MarkDialog_qml.cpp.o
+[ 98%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/FindingsCard_qml.cpp.o
+[ 98%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/AiGeoCard_qml.cpp.o
+[ 98%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/GimbalHud_qml.cpp.o
+[ 98%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/MobileShell_qml.cpp.o
+[100%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/PiMaintCard_qml.cpp.o
+[100%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.rcc/qmlcache/ArunaGroundStation_qml/GimbalWizard_qml.cpp.o
+[100%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.qt/rcc/qrc_ArunaGroundStation_raw_qml_0.cpp.o
+[100%] Building CXX object CMakeFiles/ArunaGroundStation.dir/.qt/rcc/qrc_ArunaGroundStation_raw_res_0.cpp.o
+[100%] Linking CXX executable ArunaGroundStation
+[100%] Built target ArunaGroundStation

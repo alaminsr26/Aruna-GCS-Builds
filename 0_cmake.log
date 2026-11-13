@@ -1,0 +1,150 @@
+-- The C compiler identification is GNU 13.3.0
+-- The CXX compiler identification is GNU 13.3.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Performing Test HAVE_STDATOMIC
+-- Performing Test HAVE_STDATOMIC - Success
+-- Found WrapAtomic: TRUE
+-- Found OpenGL: /usr/lib/x86_64-linux-gnu/libOpenGL.so
+-- Found WrapOpenGL: TRUE
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.13")
+-- Looking for include file sys/queue.h
+-- Looking for include file sys/queue.h - found
+-- Looking for include files sys/socket.h, linux/if_addr.h
+-- Looking for include files sys/socket.h, linux/if_addr.h - found
+-- Looking for include files sys/socket.h, linux/rtnetlink.h
+-- Looking for include files sys/socket.h, linux/rtnetlink.h - found
+-- Looking for 4 include files sys/types.h, ..., netinet/ip_icmp.h
+-- Looking for 4 include files sys/types.h, ..., netinet/ip_icmp.h - found
+-- Looking for 3 include files sys/types.h, ..., net/route.h
+-- Looking for 3 include files sys/types.h, ..., net/route.h - found
+-- Looking for include file stdatomic.h
+-- Looking for include file stdatomic.h - found
+-- Looking for usrsctp.h
+-- Looking for usrsctp.h - found
+-- Performing Test have_sa_len
+-- Performing Test have_sa_len - Failed
+-- Performing Test have_sin_len
+-- Performing Test have_sin_len - Failed
+-- Performing Test have_sin6_len
+-- Performing Test have_sin6_len - Failed
+-- Performing Test have_sconn_len
+-- Performing Test have_sconn_len - Failed
+-- Performing Test has_wfloat_equal
+-- Performing Test has_wfloat_equal - Success
+-- Performing Test has_wshadow
+-- Performing Test has_wshadow - Success
+-- Performing Test has_wpointer_aritih
+-- Performing Test has_wpointer_aritih - Success
+-- Performing Test has_wunreachable_code
+-- Performing Test has_wunreachable_code - Success
+-- Performing Test has_winit_self
+-- Performing Test has_winit_self - Success
+-- Performing Test has_wno_unused_function
+-- Performing Test has_wno_unused_function - Success
+-- Performing Test has_wno_unused_parameter
+-- Performing Test has_wno_unused_parameter - Success
+-- Performing Test has_wno_unreachable_code
+-- Performing Test has_wno_unreachable_code - Success
+-- Performing Test has_wstrict_prototypes
+-- Performing Test has_wstrict_prototypes - Success
+-- Compiler flags (CMAKE_C_FLAGS):  -std=c99 -pedantic -Wall -Wextra -Wfloat-equal -Wshadow -Wpointer-arith -Wunreachable-code -Winit-self -Wno-unused-function -Wno-unused-parameter -Wno-unreachable-code -Wstrict-prototypes
+-- Performing Test has_wno_address_of_packed_member
+-- Performing Test has_wno_address_of_packed_member - Success
+-- Performing Test has_wno_deprecated_declarations
+-- Performing Test has_wno_deprecated_declarations - Success
+-- Looking for arpa/inet.h
+-- Looking for arpa/inet.h - found
+-- Looking for byteswap.h
+-- Looking for byteswap.h - found
+-- Looking for inttypes.h
+-- Looking for inttypes.h - found
+-- Looking for machine/types.h
+-- Looking for machine/types.h - not found
+-- Looking for netinet/in.h
+-- Looking for netinet/in.h - found
+-- Looking for stdint.h
+-- Looking for stdint.h - found
+-- Looking for stdlib.h
+-- Looking for stdlib.h - found
+-- Looking for sys/int_types.h
+-- Looking for sys/int_types.h - not found
+-- Looking for sys/socket.h
+-- Looking for sys/socket.h - found
+-- Looking for sys/types.h
+-- Looking for sys/types.h - found
+-- Looking for unistd.h
+-- Looking for unistd.h - found
+-- Looking for windows.h
+-- Looking for windows.h - not found
+-- Looking for winsock2.h
+-- Looking for winsock2.h - not found
+-- Looking for sigaction
+-- Looking for sigaction - found
+-- Looking for inet_aton
+-- Looking for inet_aton - found
+-- Looking for inet_pton
+-- Looking for inet_pton - found
+-- Looking for usleep
+-- Looking for usleep - found
+-- Looking for stddef.h
+-- Looking for stddef.h - found
+-- Check size of uint8_t
+-- Check size of uint8_t - done
+-- Check size of uint16_t
+-- Check size of uint16_t - done
+-- Check size of uint32_t
+-- Check size of uint32_t - done
+-- Check size of uint64_t
+-- Check size of uint64_t - done
+-- Check size of int32_t
+-- Check size of int32_t - done
+-- Check size of unsigned long
+-- Check size of unsigned long - done
+-- Check size of unsigned long long
+-- Check size of unsigned long long - done
+-- Performing Test HAVE_INLINE
+-- Performing Test HAVE_INLINE - Success
+-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found suitable version "3.0.13", minimum required is "1.1.0")
+-- Warnings Active for: srtp2
+-- Warnings as Errors: ON
+-- Could NOT find PCAP (missing: PCAP_LIBRARY) 
+-- Warnings Active for: datatypes_driver
+-- Warnings as Errors: ON
+-- Warnings Active for: cipher_driver
+-- Warnings as Errors: ON
+-- Warnings Active for: kernel_driver
+-- Warnings as Errors: ON
+-- Warnings Active for: rdbx_driver
+-- Warnings as Errors: ON
+-- Warnings Active for: replay_driver
+-- Warnings as Errors: ON
+-- Warnings Active for: roc_driver
+-- Warnings as Errors: ON
+-- Warnings Active for: srtp_driver
+-- Warnings as Errors: ON
+-- Warnings Active for: test_srtp
+-- Warnings as Errors: ON
+-- Warnings Active for: rtpw
+-- Warnings as Errors: ON
+-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.13")
+-- FFmpeg (H.264 decoder): /usr/lib/x86_64-linux-gnu/libavcodec.so
+-- AI Track GPU: ONNX Runtime /home/runner/work/Aruna-GCS-Builds/Aruna-GCS-Builds/ort/lib/libonnxruntime.so
+-- Voice: Qt TextToSpeech found
+-- GCS location: Qt Positioning found
+-- Configuring done (23.1s)
+-- Generating done (0.2s)
+-- Build files have been written to: /home/runner/work/Aruna-GCS-Builds/Aruna-GCS-Builds/build

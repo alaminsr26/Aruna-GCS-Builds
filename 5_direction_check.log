@@ -1,0 +1,6 @@
+qt.multimedia.symbolsresolver: Couldn't load pipewire-0.3 library
+qt.multimedia.symbolsresolver: Couldn't resolve pipewire-0.3 symbols
+Error loading text-to-speech plug-in "speechd"
+qt.multimedia.ffmpeg: Using Qt multimedia with FFmpeg version 7.1.2 LGPL version 2.1 or later
+PulseAudioService: pa_context_connect() failed
+qrc:/qt/qml/Aruna/SettingsPage.qml:607:17: Unable to assign [undefined] to int
