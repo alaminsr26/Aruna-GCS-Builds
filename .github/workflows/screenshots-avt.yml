@@ -50,8 +50,11 @@ jobs:
 
       - name: Build
         run: |
-          cmake -S src -B build -DCMAKE_BUILD_TYPE=Release -DORT_ROOT=$PWD/ort
-          cmake --build build --target ArunaGroundStation --parallel 4 2>&1 | tail -40
+          mkdir -p out
+          cmake -S src -B build -DCMAKE_BUILD_TYPE=Release -DORT_ROOT=$PWD/ort > out/0_cmake.log 2>&1 || true
+          cmake --build build --target ArunaGroundStation --parallel 4 > out/0_build.log 2>&1 || true
+          grep -E "error|Error" out/0_build.log | head -40 > out/0_errors.log || true
+          tail -60 out/0_build.log
 
       - name: Screenshots
         env:
@@ -61,7 +64,8 @@ jobs:
           set +e
           mkdir -p out models && touch models/vittrack.onnx models/dinov2_s14.onnx
           export ARUNA_AI_MODELS=$PWD/models
-          app=$(find build -maxdepth 2 -type f -name ArunaGroundStation | head -1)
+          app=$(find build -type f -name ArunaGroundStation -perm -u+x | head -1)
+          echo "app: $app" > out/0_app.log
           conf="$HOME/.config/Aruna/Aruna GCS AVT.conf"
           mkdir -p "$(dirname "$conf")"
           shot() {   # name engine lang tab open
