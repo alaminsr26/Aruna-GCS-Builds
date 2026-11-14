@@ -8,10 +8,10 @@ on:
   workflow_dispatch:
     inputs:
       app:
-        description: v2 or avt
+        description: gcs (Aruna Ground Control Station), v2 or avt
         type: choice
-        options: [v2, avt]
-        default: v2
+        options: [gcs, v2, avt]
+        default: gcs
       ref:
         description: Branch (empty = ai-2.15 for v2, avt-1.0 for avt)
         default: ''
@@ -27,10 +27,10 @@ permissions:
 env:
   QT_VERSION: '6.10.1'
   SRC: ${{ inputs.app == 'avt' && 'alaminsr26/Aruna-Ground-Station-4G-AVT' || 'alaminsr26/Aruna-Ground-Station-V2' }}
-  REF: ${{ inputs.ref != '' && inputs.ref || (inputs.app == 'avt' && 'avt-1.0' || 'ai-2.15') }}
+  REF: ${{ inputs.ref != '' && inputs.ref || (inputs.app == 'avt' && 'avt-1.0' || (inputs.app == 'gcs' && 'gcs-1.0' || 'ai-2.15')) }}
   MODELS_REPO: alaminsr26/Aruna-Ground-Station-V2
-  TAGPRE: ${{ inputs.app == 'avt' && 'avt-v' || 'v' }}
-  TITLE: ${{ inputs.app == 'avt' && 'Aruna GCS AVT' || 'Aruna Ground Station' }}
+  TAGPRE: ${{ inputs.app == 'avt' && 'avt-v' || (inputs.app == 'gcs' && 'gcs-v' || 'v') }}
+  TITLE: ${{ inputs.app == 'avt' && 'Aruna GCS AVT' || (inputs.app == 'gcs' && 'Aruna Ground Control Station' || 'Aruna Ground Station') }}
 
 jobs:
   pi-package:
@@ -164,6 +164,8 @@ jobs:
           New-Item -ItemType Directory -Force models | Out-Null
           gh release download "${{ needs.pi-package.outputs.models }}" -R "$env:MODELS_REPO" -D models --clobber
           Remove-Item models\ostrack256.onnx -ErrorAction SilentlyContinue
+          # one RF-DETR size is enough (the app uses what is there): small, about 220 MB less
+          if ("${{ inputs.app }}" -eq "gcs") { Remove-Item models\rfdetr_nano.onnx, models\rfdetr_medium.onnx -ErrorAction SilentlyContinue }
           Get-ChildItem models | ForEach-Object { "{0,-28} {1,8:N1} MB" -f $_.Name, ($_.Length / 1MB) }
           "ORT_ARGS=-DORT_ROOT=$PWD\ort -DDML_ROOT=$PWD\dml" >> $env:GITHUB_ENV
 
