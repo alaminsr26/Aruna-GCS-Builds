@@ -16,6 +16,10 @@ on:
         description: Branch (empty = ai-2.15 for v2, avt-1.0 for avt)
         default: ''
         required: false
+      pi_only:
+        description: Pi package only (no Windows installer)
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -84,6 +88,7 @@ jobs:
 
   windows:
     needs: pi-package
+    if: ${{ !inputs.pi_only }}
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
