@@ -93,6 +93,10 @@ jobs:
           token: ${{ secrets.SRC_TOKEN || secrets.SCR_TOKEN }}
           persist-credentials: false
 
+      - name: Text check (US spelling, no emoji)
+        shell: bash
+        run: if [ -f tools/check_text.py ]; then python tools/check_text.py; fi
+
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:

@@ -39,6 +39,9 @@ jobs:
           token: ${{ secrets.SRC_TOKEN || secrets.SCR_TOKEN }}
           persist-credentials: false
 
+      - name: Text check (US spelling, no emoji)
+        run: if [ -f tools/check_text.py ]; then python3 tools/check_text.py; fi
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
