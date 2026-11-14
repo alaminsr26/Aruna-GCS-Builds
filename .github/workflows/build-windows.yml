@@ -55,7 +55,7 @@ jobs:
           if [ -f tools/ai/export_models.py ]; then
             echo "models=ai-models-$(sha256sum tools/ai/export_models.py | cut -c1-10)" >> "$GITHUB_OUTPUT"
           fi
-          if [ -f pi/setup_lock.sh ] && [ -f tools/ai/export_models.py ]; then      # Pi Lock YOLO12
+          if [ -f pi/setup_lock_ai.sh ] && [ -f tools/ai/export_models.py ]; then   # Pi Lock YOLO12 (V2 only; AVT: OpenCV trackers)
             mkdir -p pi/models
             gh release download "ai-models-$(sha256sum tools/ai/export_models.py | cut -c1-10)" -R "$MODELS_REPO" -p yolo12n_320.onnx -D pi/models --clobber || true
           fi
