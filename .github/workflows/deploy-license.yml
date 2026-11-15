@@ -1,0 +1,49 @@
+name: Deploy license server
+
+# Deploys the license server + admin page (server/ of the private V2 repo) to Cloudflare Workers.
+# Here because Actions on the private repo are blocked by billing. Needs the secret CLOUDFLARE_API_TOKEN
+# in THIS repo (Settings > Secrets and variables > Actions). The logs here are public: nothing secret is printed.
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: branch of Aruna-Ground-Station-V2 with server/
+        default: gcs-1.0
+
+concurrency: license-server
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: alaminsr26/Aruna-Ground-Station-V2
+          ref: ${{ inputs.ref }}
+          token: ${{ secrets.SRC_TOKEN || secrets.SCR_TOKEN }}
+          sparse-checkout: server
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check the secret
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then echo "::error::Add the secret CLOUDFLARE_API_TOKEN to this repo first"; exit 1; fi
+      - name: Wrangler
+        working-directory: server
+        run: npm install --no-audit --no-fund > /dev/null
+      - name: Database
+        working-directory: server
+        run: |
+          set -e
+          id=$(npx wrangler d1 list --json | jq -r '.[] | select(.name=="aruna") | .uuid')
+          [ -z "$id" ] && { echo "::error::D1 database aruna not found"; exit 1; }
+          sed -i "s/D1_ID_PLACEHOLDER/$id/" wrangler.toml
+          npx wrangler d1 migrations apply aruna --remote > /dev/null
+          echo "database ready"
+      - name: Deploy
+        working-directory: server
+        run: |
+          npx wrangler deploy > /dev/null
+          echo "deployed to aruna-license.aruna-gcs.workers.dev"
