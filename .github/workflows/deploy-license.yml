@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      OPENAIP_API_KEY: ${{ secrets.OPENAIP_API_KEY }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -47,3 +48,9 @@ jobs:
         run: |
           npx wrangler deploy > /dev/null
           echo "deployed to aruna-license.aruna-gcs.workers.dev"
+      - name: Airspace key (openAIP)
+        working-directory: server
+        run: |
+          if [ -z "$OPENAIP_API_KEY" ]; then echo "no OPENAIP_API_KEY secret: airspace stays off"; exit 0; fi
+          printf '%s' "$OPENAIP_API_KEY" | npx wrangler secret put OPENAIP_API_KEY > /dev/null
+          echo "airspace key set"
