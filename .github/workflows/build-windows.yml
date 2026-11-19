@@ -76,7 +76,8 @@ jobs:
           rm -rf pi/__pycache__ pi/tools/__pycache__
           echo "$v" > pi/VERSION
           cp -r pi aruna-pi
-          zip -qr "aruna-pi-$v.zip" aruna-pi
+          n=aruna-pi; [ "${{ inputs.app }}" = "gcs" ] && n=aruna-link   # GCS: the onboard unit is "Aruna Link" for users
+          zip -qr "$n-$v.zip" aruna-pi
       - name: Attach to release
         uses: softprops/action-gh-release@v2
         with:
@@ -84,7 +85,7 @@ jobs:
           prerelease: true
           name: ${{ env.TITLE }} ${{ steps.pi.outputs.version }} (test)
           body: "${{ env.TITLE }} ${{ steps.pi.outputs.version }} built from ${{ env.SRC }} @ ${{ env.REF }}."
-          files: aruna-pi-*.zip
+          files: aruna-*-*.zip
 
   windows:
     needs: pi-package
@@ -109,7 +110,7 @@ jobs:
           host: windows
           target: desktop
           arch: win64_msvc2022_64
-          modules: 'qtmultimedia qtpositioning qtspeech'
+          modules: 'qtmultimedia qtpositioning qtspeech qtserialport'
           aqtversion: '>=3.2.0'
           cache: true
 
@@ -211,10 +212,11 @@ jobs:
           New-Item -ItemType Directory -Force pi\vendor | Out-Null
           Invoke-WebRequest -Uri "https://github.com/bluenviron/mediamtx/releases/download/$mtx/mediamtx_${mtx}_linux_arm64.tar.gz" -OutFile "pi\vendor\mediamtx_${mtx}_linux_arm64.tar.gz"
           Set-Content -Path pi\VERSION -Value $env:APP_VERSION -NoNewline
-          Copy-Item -Recurse pi dist\pi
-          New-Item -ItemType Directory -Force dist\pi-update | Out-Null
-          gh release download "$env:TAGPRE$env:APP_VERSION-test" -R "${{ github.repository }}" -p "aruna-pi-*.zip" -D dist\pi-update --clobber
-          Get-ChildItem -Recurse dist\pi -Include __pycache__ | Remove-Item -Recurse -Force
+          $lk = if ("${{ inputs.app }}" -eq "gcs") { "link" } else { "pi" }
+          Copy-Item -Recurse pi "dist\$lk"
+          New-Item -ItemType Directory -Force "dist\$lk-update" | Out-Null
+          gh release download "$env:TAGPRE$env:APP_VERSION-test" -R "${{ github.repository }}" -p "aruna-$lk-*.zip" -D "dist\$lk-update" --clobber
+          Get-ChildItem -Recurse "dist\$lk" -Include __pycache__ | Remove-Item -Recurse -Force
 
       - name: Smoke test (exe starts)
         continue-on-error: true
