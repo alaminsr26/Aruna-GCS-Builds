@@ -6,12 +6,12 @@ on:
   workflow_dispatch:
     inputs:
       app:
-        description: gcs (Aruna Ground Control Station), v2 or avt
+        description: gcs (Aruna Ground Control Station), v3 (Aruna Ground Control Station V3), v2 or avt
         type: choice
-        options: [gcs, v2, avt]
+        options: [gcs, v3, v2, avt]
         default: gcs
       ref:
-        description: Branch (empty = ai-2.15 for v2, avt-1.0 for avt)
+        description: Branch (empty = gcs-1.0 for gcs, main for v3, ai-2.15 for v2, avt-1.0 for avt)
         default: ''
         required: false
 
@@ -22,11 +22,11 @@ env:
   QT_VERSION: '6.10.1'
   NDK_VERSION: '27.2.12479018'   # the NDK Qt 6.10 is built with
   ANDROID_PLATFORM: 'android-35'
-  SRC: ${{ inputs.app == 'avt' && 'alaminsr26/Aruna-Ground-Station-4G-AVT' || 'alaminsr26/Aruna-Ground-Station-V2' }}
-  REF: ${{ inputs.ref != '' && inputs.ref || (inputs.app == 'avt' && 'avt-1.0' || (inputs.app == 'gcs' && 'gcs-1.0' || 'ai-2.15')) }}
-  PREFIX: ${{ inputs.app == 'avt' && 'ArunaGCS-AVT' || (inputs.app == 'gcs' && 'ArunaGCS' || 'ArunaGroundStation') }}
-  TAGPRE: ${{ inputs.app == 'avt' && 'avt-v' || (inputs.app == 'gcs' && 'gcs-v' || 'v') }}
-  TITLE: ${{ inputs.app == 'avt' && 'Aruna GCS AVT' || (inputs.app == 'gcs' && 'Aruna Ground Control Station' || 'Aruna GCS') }}
+  SRC: ${{ inputs.app == 'avt' && 'alaminsr26/Aruna-Ground-Station-4G-AVT' || (inputs.app == 'v3' && 'alaminsr26/Aruna-Ground-Control-Station-V3' || 'alaminsr26/Aruna-Ground-Station-V2') }}
+  REF: ${{ inputs.ref != '' && inputs.ref || (inputs.app == 'avt' && 'avt-1.0' || (inputs.app == 'gcs' && 'gcs-1.0' || (inputs.app == 'v3' && 'main' || 'ai-2.15'))) }}
+  PREFIX: ${{ inputs.app == 'avt' && 'ArunaGCS-AVT' || (inputs.app == 'gcs' && 'ArunaGCS' || (inputs.app == 'v3' && 'ArunaGCS-V3' || 'ArunaGroundStation')) }}
+  TAGPRE: ${{ inputs.app == 'avt' && 'avt-v' || (inputs.app == 'gcs' && 'gcs-v' || (inputs.app == 'v3' && 'gcs3-v' || 'v')) }}
+  TITLE: ${{ inputs.app == 'avt' && 'Aruna GCS AVT' || (inputs.app == 'gcs' && 'Aruna Ground Control Station' || (inputs.app == 'v3' && 'Aruna Ground Control Station V3' || 'Aruna GCS')) }}
 
 jobs:
   android:

@@ -1,19 +1,21 @@
 name: Build Windows installer
 
 # Builds the Windows installer from a private source repo (checked out with the SRC_TOKEN secret, read only).
-# app: v2  = Aruna-Ground-Station-V2      -> pre-release v<version>-test
+# app: gcs = Aruna-Ground-Station-V2 (gcs-1.0) -> pre-release gcs-v<version>-test
+#      v3  = Aruna-Ground-Control-Station-V3 (main, relay) -> pre-release gcs3-v<version>-test
+#      v2  = Aruna-Ground-Station-V2      -> pre-release v<version>-test
 #      avt = Aruna-Ground-Station-4G-AVT  -> pre-release avt-v<version>-test
 # The AI models come from the V2 repo's "ai-models-<hash>" pre-release (same export script).
 on:
   workflow_dispatch:
     inputs:
       app:
-        description: gcs (Aruna Ground Control Station), v2 or avt
+        description: gcs (Aruna Ground Control Station), v3 (Aruna Ground Control Station V3), v2 or avt
         type: choice
-        options: [gcs, v2, avt]
+        options: [gcs, v3, v2, avt]
         default: gcs
       ref:
-        description: Branch (empty = ai-2.15 for v2, avt-1.0 for avt)
+        description: Branch (empty = gcs-1.0 for gcs, main for v3, ai-2.15 for v2, avt-1.0 for avt)
         default: ''
         required: false
       pi_only:
@@ -26,11 +28,13 @@ permissions:
 
 env:
   QT_VERSION: '6.10.1'
-  SRC: ${{ inputs.app == 'avt' && 'alaminsr26/Aruna-Ground-Station-4G-AVT' || 'alaminsr26/Aruna-Ground-Station-V2' }}
-  REF: ${{ inputs.ref != '' && inputs.ref || (inputs.app == 'avt' && 'avt-1.0' || (inputs.app == 'gcs' && 'gcs-1.0' || 'ai-2.15')) }}
+  SRC: ${{ inputs.app == 'avt' && 'alaminsr26/Aruna-Ground-Station-4G-AVT' || (inputs.app == 'v3' && 'alaminsr26/Aruna-Ground-Control-Station-V3' || 'alaminsr26/Aruna-Ground-Station-V2') }}
+  REF: ${{ inputs.ref != '' && inputs.ref || (inputs.app == 'avt' && 'avt-1.0' || (inputs.app == 'gcs' && 'gcs-1.0' || (inputs.app == 'v3' && 'main' || 'ai-2.15'))) }}
+  # gcs and v3 are the same kind of app (Aruna Link package, one RF-DETR size)
+  KIND: ${{ (inputs.app == 'gcs' || inputs.app == 'v3') && 'gcs' || inputs.app }}
   MODELS_REPO: alaminsr26/Aruna-Ground-Station-V2
-  TAGPRE: ${{ inputs.app == 'avt' && 'avt-v' || (inputs.app == 'gcs' && 'gcs-v' || 'v') }}
-  TITLE: ${{ inputs.app == 'avt' && 'Aruna GCS AVT' || (inputs.app == 'gcs' && 'Aruna Ground Control Station' || 'Aruna Ground Station') }}
+  TAGPRE: ${{ inputs.app == 'avt' && 'avt-v' || (inputs.app == 'gcs' && 'gcs-v' || (inputs.app == 'v3' && 'gcs3-v' || 'v')) }}
+  TITLE: ${{ inputs.app == 'avt' && 'Aruna GCS AVT' || (inputs.app == 'gcs' && 'Aruna Ground Control Station' || (inputs.app == 'v3' && 'Aruna Ground Control Station V3' || 'Aruna Ground Station')) }}
 
 jobs:
   pi-package:
@@ -76,7 +80,7 @@ jobs:
           rm -rf pi/__pycache__ pi/tools/__pycache__
           echo "$v" > pi/VERSION
           cp -r pi aruna-pi
-          n=aruna-pi; [ "${{ inputs.app }}" = "gcs" ] && n=aruna-link   # GCS: the onboard unit is "Aruna Link" for users
+          n=aruna-pi; [ "${{ env.KIND }}" = "gcs" ] && n=aruna-link   # GCS: the onboard unit is "Aruna Link" for users
           zip -qr "$n-$v.zip" aruna-pi
       - name: Attach to release
         uses: softprops/action-gh-release@v2
@@ -166,7 +170,7 @@ jobs:
           gh release download "${{ needs.pi-package.outputs.models }}" -R "$env:MODELS_REPO" -D models --clobber
           Remove-Item models\ostrack256.onnx -ErrorAction SilentlyContinue
           # one RF-DETR size is enough (the app uses what is there): small, about 220 MB less
-          if ("${{ inputs.app }}" -eq "gcs") { Remove-Item models\rfdetr_nano.onnx, models\rfdetr_medium.onnx -ErrorAction SilentlyContinue }
+          if ("${{ env.KIND }}" -eq "gcs") { Remove-Item models\rfdetr_nano.onnx, models\rfdetr_medium.onnx -ErrorAction SilentlyContinue }
           Get-ChildItem models | ForEach-Object { "{0,-28} {1,8:N1} MB" -f $_.Name, ($_.Length / 1MB) }
           "ORT_ARGS=-DORT_ROOT=$PWD\ort -DDML_ROOT=$PWD\dml" >> $env:GITHUB_ENV
 
@@ -212,7 +216,7 @@ jobs:
           New-Item -ItemType Directory -Force pi\vendor | Out-Null
           Invoke-WebRequest -Uri "https://github.com/bluenviron/mediamtx/releases/download/$mtx/mediamtx_${mtx}_linux_arm64.tar.gz" -OutFile "pi\vendor\mediamtx_${mtx}_linux_arm64.tar.gz"
           Set-Content -Path pi\VERSION -Value $env:APP_VERSION -NoNewline
-          $lk = if ("${{ inputs.app }}" -eq "gcs") { "link" } else { "pi" }
+          $lk = if ("${{ env.KIND }}" -eq "gcs") { "link" } else { "pi" }
           Copy-Item -Recurse pi "dist\$lk"
           New-Item -ItemType Directory -Force "dist\$lk-update" | Out-Null
           gh release download "$env:TAGPRE$env:APP_VERSION-test" -R "${{ github.repository }}" -p "aruna-$lk-*.zip" -D "dist\$lk-update" --clobber
