@@ -1,0 +1,110 @@
+name: PR check (compile + unit tests)
+
+# Compiles Aruna Ground Control Station from any branch or PR of the private V2 repo and runs the unit tests.
+# No installer, no release: only a pass / fail in this repo's Actions tab.
+# (The V2 repo cannot run its own Actions right now: account billing / spending limit.)
+# ref: a branch (pr/tests), a commit SHA, or a PR head (refs/pull/68/head)
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch, SHA or refs/pull/<n>/head of Aruna-Ground-Station-V2
+        required: true
+        default: gcs-1.0
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-check-${{ inputs.ref }}
+  cancel-in-progress: true
+
+env:
+  QT_VERSION: '6.10.1'
+  SRC: alaminsr26/Aruna-Ground-Station-V2
+
+jobs:
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ env.SRC }}
+          ref: ${{ inputs.ref }}
+          token: ${{ secrets.SRC_TOKEN || secrets.SCR_TOKEN }}
+          persist-credentials: false
+
+      - name: Text check (US spelling, no emoji)
+        shell: bash
+        run: if [ -f tools/check_text.py ]; then python tools/check_text.py; fi
+
+      - name: i18n.json is valid JSON
+        shell: bash
+        run: |
+          for f in $(git ls-files '*i18n*.json'); do
+            python -m json.tool "$f" > /dev/null || { echo "bad JSON in $f"; exit 1; }
+          done
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: windows
+          target: desktop
+          arch: win64_msvc2022_64
+          modules: 'qtmultimedia qtpositioning qtspeech qtserialport'
+          aqtversion: '>=3.2.0'
+          cache: true
+
+      - name: MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+
+      # same cache key as build-windows.yml, so it is normally a cache hit
+      - name: Cache FFmpeg (H.264 decoder)
+        id: ffcache
+        uses: actions/cache@v4
+        with:
+          path: ffmpeg-min
+          key: ffmpeg-n7.1-msvc-h264-d3d11va-v2
+
+      - name: Build FFmpeg (H.264 decoder only)
+        if: steps.ffcache.outputs.cache-hit != 'true'
+        shell: cmd
+        run: |
+          git -c core.autocrlf=false clone --depth 1 --branch n7.1 https://github.com/FFmpeg/FFmpeg ffmpeg-src
+          set MSYS2_PATH_TYPE=inherit
+          set CHERE_INVOKING=1
+          C:\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm --needed make nasm diffutils > /dev/null"
+          C:\msys64\usr\bin\bash.exe -lc "rm -f /usr/bin/link.exe; cd ffmpeg-src && ./configure --toolchain=msvc --prefix=../ffmpeg-min --extra-cflags=-MD --disable-everything --enable-decoder=h264 --enable-parser=h264 --enable-d3d11va --enable-hwaccel=h264_d3d11va --enable-hwaccel=h264_d3d11va2 --disable-programs --disable-doc --enable-static --disable-shared --disable-network --disable-avformat --disable-swscale --disable-swresample --disable-avdevice --disable-avfilter --disable-iconv --disable-zlib --disable-bzlib --disable-lzma --disable-debug && make -j4 && make install"
+          if not exist ffmpeg-min\lib\libavcodec.a exit /b 1
+
+      - name: OpenSSL
+        shell: pwsh
+        run: |
+          $o = "C:\Program Files\OpenSSL"
+          if (-not (Test-Path "$o\include\openssl\ssl.h")) { choco install openssl -y --no-progress | Out-Null }
+          if (-not (Test-Path "$o\include\openssl\ssl.h")) { throw "OpenSSL not found" }
+          "OPENSSL_ROOT_DIR=$o" >> $env:GITHUB_ENV
+
+      # no ONNX Runtime / models: the AI code is compiled out, everything else is the same as the release build
+      - name: Configure
+        shell: cmd
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DFFMPEG_ROOT=%CD%\ffmpeg-min -DARUNA_TESTS=ON
+
+      - name: Build app
+        run: cmake --build build --config Release --parallel --target ArunaGroundStation
+
+      - name: Build and run unit tests
+        shell: pwsh
+        run: |
+          if (-not (Select-String -Path CMakeLists.txt -Pattern 'ARUNA_TESTS' -Quiet)) { "no unit tests on this ref (ARUNA_TESTS missing), skipped"; exit 0 }
+          cmake --build build --config Release --parallel --target aruna_tests
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          ctest --test-dir build -C Release --output-on-failure
+
+      - name: Summary
+        if: always()
+        shell: bash
+        run: |
+          echo "### PR check: \`${{ inputs.ref }}\` @ $(git rev-parse --short HEAD)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Result: **${{ job.status }}**" >> "$GITHUB_STEP_SUMMARY"
