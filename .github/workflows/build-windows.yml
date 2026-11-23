@@ -126,7 +126,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ffmpeg-min
-          key: ffmpeg-n7.1-msvc-h264-v1
+          key: ffmpeg-n7.1-msvc-h264-d3d11va-v2
 
       - name: Build FFmpeg (H.264 decoder only)
         if: steps.ffcache.outputs.cache-hit != 'true'
@@ -136,7 +136,7 @@ jobs:
           set MSYS2_PATH_TYPE=inherit
           set CHERE_INVOKING=1
           C:\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm --needed make nasm diffutils > /dev/null"
-          C:\msys64\usr\bin\bash.exe -lc "rm -f /usr/bin/link.exe; cd ffmpeg-src && ./configure --toolchain=msvc --prefix=../ffmpeg-min --extra-cflags=-MD --disable-everything --enable-decoder=h264 --enable-parser=h264 --disable-programs --disable-doc --enable-static --disable-shared --disable-network --disable-avformat --disable-swscale --disable-swresample --disable-avdevice --disable-avfilter --disable-iconv --disable-zlib --disable-bzlib --disable-lzma --disable-debug && make -j4 && make install"
+          C:\msys64\usr\bin\bash.exe -lc "rm -f /usr/bin/link.exe; cd ffmpeg-src && ./configure --toolchain=msvc --prefix=../ffmpeg-min --extra-cflags=-MD --disable-everything --enable-decoder=h264 --enable-parser=h264 --enable-d3d11va --enable-hwaccel=h264_d3d11va --enable-hwaccel=h264_d3d11va2 --disable-programs --disable-doc --enable-static --disable-shared --disable-network --disable-avformat --disable-swscale --disable-swresample --disable-avdevice --disable-avfilter --disable-iconv --disable-zlib --disable-bzlib --disable-lzma --disable-debug && make -j4 && make install"
           if not exist ffmpeg-min\lib\libavcodec.a exit /b 1
 
       - name: OpenSSL
