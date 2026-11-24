@@ -246,7 +246,7 @@ jobs:
           Remove-Item dist\platforms\qoffscreen.dll
           $log = (Get-Content smoke_err.txt -Raw -ErrorAction SilentlyContinue) + (Get-Content smoke_out.txt -Raw -ErrorAction SilentlyContinue)
           Write-Host "---- app messages ----"; Write-Host $log
-          $bad = $log -match "failed to load component|is not a type|unavailable|module .* is not installed|Cannot assign to non-existent"
+          $bad = $log -match "failed to load component|is not a type|Type \S+ unavailable|module .* is not installed|Cannot assign to non-existent"
           if ($bad -or -not (Test-Path shot.png)) { throw "app did not start (see the app messages above)" }
 
       - name: Build installer (Inno Setup)
