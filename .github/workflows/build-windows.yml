@@ -240,11 +240,27 @@ jobs:
           & $iscc /DAppVersion=${{ needs.pi-package.outputs.version }} installer\aruna.iss
           Get-ChildItem installer\Output
 
+      # the pre-release page shows only this version's section of RELEASE_NOTES.md ("## <version>" up to the next "## ")
+      - name: Release notes of this version
+        shell: pwsh
+        run: |
+          $v = "${{ needs.pi-package.outputs.version }}"
+          $out = @(); $in = $false
+          if (Test-Path RELEASE_NOTES.md) {
+            foreach ($l in (Get-Content RELEASE_NOTES.md -Encoding UTF8)) {
+              if ($l -match '^## ') { if ($in) { break }; $in = $l -match ('^## ' + [regex]::Escape($v) + '(\s|$)'); continue }
+              if ($in) { $out += $l }
+            }
+          }
+          if (-not ($out -join '').Trim()) { $out = @("No release notes for $v in RELEASE_NOTES.md.") }
+          Set-Content notes-version.md -Value ($out -join "`n") -Encoding UTF8
+          Get-Content notes-version.md
+
       - name: Attach to release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAGPRE }}${{ needs.pi-package.outputs.version }}-test
           prerelease: true
           name: ${{ env.TITLE }} ${{ needs.pi-package.outputs.version }} (test)
-          body_path: RELEASE_NOTES.md
+          body_path: notes-version.md
           files: installer/Output/*.exe
