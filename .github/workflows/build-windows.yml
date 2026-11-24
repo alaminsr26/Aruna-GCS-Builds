@@ -27,6 +27,7 @@ permissions:
   contents: write
 
 env:
+  SCCACHE_GHA_ENABLED: "true"
   QT_VERSION: '6.10.1'
   SRC: ${{ inputs.app == 'avt' && 'alaminsr26/Aruna-Ground-Station-4G-AVT' || (inputs.app == 'v3' && 'alaminsr26/Aruna-Ground-Control-Station-V3' || 'alaminsr26/Aruna-Ground-Station-V2') }}
   REF: ${{ inputs.ref != '' && inputs.ref || (inputs.app == 'avt' && 'avt-1.0' || (inputs.app == 'gcs' && 'gcs-1.0' || (inputs.app == 'v3' && 'main' || 'ai-2.15'))) }}
@@ -182,12 +183,21 @@ jobs:
           if (-not ($k -and ([Convert]::FromBase64String($k)).Length -eq 32)) { $k = "" }
           "ARUNA_PUBKEY=$k" >> $env:GITHUB_ENV
 
+      # compile cache: only the files that changed are compiled again (sccache, stored in the GitHub Actions cache;
+      # needs the Ninja generator, the Visual Studio generator cannot use a compiler launcher)
+      - name: Compile cache (sccache)
+        uses: mozilla-actions/sccache-action@v0.0.9
+
       - name: Configure
-        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DFFMPEG_ROOT=%CD%\ffmpeg-min %ORT_ARGS% -DARUNA_LICENSE_PUBKEY=%ARUNA_PUBKEY%
+        run: |
+          where ninja >nul 2>nul || choco install ninja -y --no-progress
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_POLICY_DEFAULT_CMP0141=NEW -DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded -DFFMPEG_ROOT=%CD%\ffmpeg-min %ORT_ARGS% -DARUNA_LICENSE_PUBKEY=%ARUNA_PUBKEY%
         shell: cmd
 
       - name: Build
-        run: cmake --build build --config Release --parallel --target ArunaGroundStation
+        run: |
+          cmake --build build --parallel --target ArunaGroundStation
+          sccache --show-stats
 
       - name: Bundle
         shell: pwsh
@@ -196,7 +206,8 @@ jobs:
           APP_VERSION: ${{ needs.pi-package.outputs.version }}
         run: |
           New-Item -ItemType Directory -Force dist | Out-Null
-          Copy-Item build\Release\ArunaGroundStation.exe dist\
+          $exe = @("build\ArunaGroundStation.exe", "build\Release\ArunaGroundStation.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
+          Copy-Item $exe dist\
           Copy-Item "$env:OPENSSL_ROOT_DIR\bin\libssl-3-x64.dll", "$env:OPENSSL_ROOT_DIR\bin\libcrypto-3-x64.dll" dist\
           if (Test-Path ort) {
             Copy-Item ort\runtimes\win-x64\native\onnxruntime*.dll dist\

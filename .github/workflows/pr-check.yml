@@ -20,6 +20,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  SCCACHE_GHA_ENABLED: "true"
   QT_VERSION: '6.10.1'
   SRC: alaminsr26/Aruna-Ground-Station-V2
 
@@ -87,18 +88,25 @@ jobs:
           "OPENSSL_ROOT_DIR=$o" >> $env:GITHUB_ENV
 
       # no ONNX Runtime / models: the AI code is compiled out, everything else is the same as the release build
+      # compile cache: only the files that changed are compiled again (sccache, stored in the GitHub Actions cache;
+      # needs the Ninja generator, the Visual Studio generator cannot use a compiler launcher)
+      - name: Compile cache (sccache)
+        uses: mozilla-actions/sccache-action@v0.0.9
+
       - name: Configure
         shell: cmd
-        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DFFMPEG_ROOT=%CD%\ffmpeg-min -DARUNA_TESTS=ON
+        run: |
+          where ninja >nul 2>nul || choco install ninja -y --no-progress
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_POLICY_DEFAULT_CMP0141=NEW -DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded -DFFMPEG_ROOT=%CD%\ffmpeg-min -DARUNA_TESTS=ON
 
       - name: Build app
-        run: cmake --build build --config Release --parallel --target ArunaGroundStation
+        run: cmake --build build --parallel --target ArunaGroundStation
 
       - name: Build and run unit tests
         shell: pwsh
         run: |
           if (-not (Select-String -Path CMakeLists.txt -Pattern 'ARUNA_TESTS' -Quiet)) { "no unit tests on this ref (ARUNA_TESTS missing), skipped"; exit 0 }
-          cmake --build build --config Release --parallel --target aruna_tests
+          cmake --build build --parallel --target aruna_tests
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           ctest --test-dir build -C Release --output-on-failure
 
