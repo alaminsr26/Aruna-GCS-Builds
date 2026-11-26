@@ -20,7 +20,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: pr-check-${{ inputs.ref }}
+  group: pr-check-${{ inputs.ref }}-${{ inputs.qt }}
   cancel-in-progress: true
 
 env:
