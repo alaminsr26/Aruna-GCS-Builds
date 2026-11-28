@@ -118,7 +118,9 @@ jobs:
           [ "$mr" = "${{ github.repository }}" ] && tok="${{ github.token }}" || tok="$GH_TOKEN"
           if [ -f pi/setup_lock_ai.sh ] && [ -n "$mt" ]; then   # Pi Lock YOLO26 nano 320 (NCNN + ONNX), YOLO12 if older
             mkdir -p pi/models
-            for f in yolo26n_320.onnx yolo26n_320.ncnn.param yolo26n_320.ncnn.bin yolo12n_320.onnx; do
+            # YOLO12 only for an Aruna Link without YOLO26 (older refs): about 10 MB less
+            old=""; grep -q yolo26 pi/aruna_mot.py 2>/dev/null || old=yolo12n_320.onnx
+            for f in yolo26n_320.onnx yolo26n_320.ncnn.param yolo26n_320.ncnn.bin $old; do
               GH_TOKEN=$tok gh release download "$mt" -R "$mr" -p "$f" -D pi/models --clobber || true
             done
             ls -la pi/models || true
@@ -231,8 +233,11 @@ jobs:
           if ($mr -eq "${{ github.repository }}") { $env:GH_TOKEN = "${{ github.token }}" }
           gh release download "${{ needs.pi-package.outputs.models }}" -R $mr -D models --clobber
           Remove-Item models\ostrack256.onnx -ErrorAction SilentlyContinue
-          # one RF-DETR size is enough (the app uses what is there): small, about 220 MB less
-          if ("${{ env.KIND }}" -eq "gcs") { Remove-Item models\rfdetr_nano.onnx, models\rfdetr_medium.onnx -ErrorAction SilentlyContinue }
+          # the Aruna Link's models (320 px, in its own package) are not used by the app
+          Remove-Item models\yolo26n_320.*, models\yolo12n_320.* -ErrorAction SilentlyContinue
+          # RF-DETR: none for an app without it (1.1.53: OBJECTS = YOLO26), else one size (small), about 220 MB less
+          if (-not (Select-String -Path src\ai\AiWorker.cpp -Pattern 'rfdetr_%1' -SimpleMatch -Quiet)) { Remove-Item models\rfdetr_*.onnx -ErrorAction SilentlyContinue }
+          elseif ("${{ env.KIND }}" -eq "gcs") { Remove-Item models\rfdetr_nano.onnx, models\rfdetr_medium.onnx -ErrorAction SilentlyContinue }
           Get-ChildItem models | ForEach-Object { "{0,-28} {1,8:N1} MB" -f $_.Name, ($_.Length / 1MB) }
           "ORT_ARGS=-DORT_ROOT=$PWD\ort -DDML_ROOT=$PWD\dml" >> $env:GITHUB_ENV
 
